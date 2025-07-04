@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yono/screens/homescreen_first.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -25,12 +26,23 @@ class _SplashScreenState extends State<SplashScreen>
         Tween<double>(begin: 0.0, end: 4.0).animate(
           CurvedAnimation(parent: _controller, curve: Curves.easeOut),
         )..addStatusListener((status) {
-          if (status == AnimationStatus.completed) {
-            setState(() {
-              animationDone = true;
-            });
-          }
-        });
+  if (status == AnimationStatus.completed) {
+    setState(() => animationDone = true);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          transitionDuration: const Duration(milliseconds: 800),
+          pageBuilder: (_, __, ___) => HomescreenFirst(),
+          transitionsBuilder: (_, animation, __, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+        ),
+      );
+    });
+  }
+});
+
 
     Future.delayed(Duration(seconds: 2), () {
       setState(() => showGradient = true);
