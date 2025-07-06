@@ -13,25 +13,25 @@ class HomescreenFirst extends StatelessWidget {
       child: Scaffold(
         bottomNavigationBar: 
             _buildBottomBar(),
-        backgroundColor:  Color(0xFFFFF5F8),
+        backgroundColor:  Color.fromARGB(255, 255, 255, 255),
         body: ListView(
           children: [
-            Stack(
-              alignment: Alignment.topCenter,
+            Stack(  
+              alignment: Alignment.topCenter,  
               children: [
             _buildHeader(),
             _buildLoginCard(context),
               ],
             ),
             _buildViewBalanceCard(),
-            _buildQuickPaySection(),
+            _buildQuickPaySection(), 
             SizedBox(height: 10),
             _buildQuickActionGrid(),
             // _buildBanner(),
             // Spacer(),
             Padding(
           padding: const EdgeInsets.only(top:50),
-              child: Image.asset('assets/bottomBanner.png',height: 140,fit: BoxFit.fill,),
+              child: Image.asset('assets/bottomBanner.png',height: 150,fit: BoxFit.fill,),
             )
           ],
         ),
