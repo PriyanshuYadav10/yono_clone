@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:yono/screens/my_balance_screen.dart';
-import 'package:yono/screens/relationship_overview.dart';
 import 'package:yono/screens/yono_pay_screen.dart';
 
 class HomescreenSecond extends StatelessWidget {
@@ -68,7 +67,10 @@ class HomescreenSecond extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.menu, color: Colors.black),
           onPressed: () {
-
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => MyBalanceScreen()),
+            );
           },
         ),
         actions: [
@@ -165,13 +167,8 @@ class HomescreenSecond extends StatelessWidget {
                   context,
                   MaterialPageRoute(builder: (context) => YonoPayScreen()),
                 );
-              } else if(label=='Accounts') {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => RelationshipOverviewScreen()),
-                );
-              }else{
-
+              } else {
+                // Handle other cases or do nothing
               }
             },
           );
