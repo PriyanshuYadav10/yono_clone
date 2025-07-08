@@ -220,7 +220,7 @@ Padding(
           _QuickIcon(icon:'assets/pay.png', label: "YONO Cash"),
           _QuickIcon(icon: 'assets/loan.png', label: "Loans"),
           _QuickIcon(icon: 'assets/investment.png', label: "Investments"),
-          _QuickIcon(icon: 'asset/offer.png', label: "Best Offers"),
+          _QuickIcon(icon: 'assets/offer.png', label: "Best Offers"),
         ],
       ),
     );

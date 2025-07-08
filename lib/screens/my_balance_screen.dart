@@ -133,8 +133,159 @@ class MyBalanceScreen extends StatelessWidget {
 
 }
 
-class TransactionTab extends StatelessWidget {
+class TransactionTab extends StatefulWidget {
   const TransactionTab({super.key});
+
+  @override
+  State<TransactionTab> createState() => _TransactionTabState();
+}
+
+class _TransactionTabState extends State<TransactionTab> {
+  final List<TransactionTile> _transactions = [];
+void _showTransactionBottomSheet() {
+  final titleController = TextEditingController();
+  final amountController = TextEditingController();
+  final dateController = TextEditingController();
+  bool isCredit = false;
+
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (context) {
+      return StatefulBuilder(
+        builder: (context, setStateDialog) {
+          return Padding(
+            padding: EdgeInsets.only(
+              left: 16,
+              right: 16,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+              top: 24,
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    "Add New Transaction",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: titleController,
+                    decoration: InputDecoration(
+                      labelText: "Title",
+                      prefixIcon: const Icon(Icons.text_fields),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: amountController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: "Amount",
+                      prefixIcon: const Icon(Icons.currency_rupee),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  GestureDetector(
+                    onTap: () async {
+                      final picked = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2100),
+                      );
+                      if (picked != null) {
+                        dateController.text =
+                            "${picked.day.toString().padLeft(2, '0')} ${_monthName(picked.month)} ${picked.year}";
+                      }
+                    },
+                    child: AbsorbPointer(
+                      child: TextField(
+                        controller: dateController,
+                        decoration: InputDecoration(
+                          labelText: "Date",
+                          hintText: "Tap to select date",
+                          prefixIcon: const Icon(Icons.calendar_today),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text("Is Credit?", style: TextStyle(fontSize: 16)),
+                      Switch(
+                        value: isCredit,
+                        onChanged: (val) {
+                          setStateDialog(() => isCredit = val);
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text("Cancel"),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (titleController.text.isNotEmpty &&
+                                amountController.text.isNotEmpty &&
+                                dateController.text.isNotEmpty) {
+                              setState(() {
+                                _transactions.add(
+                                  TransactionTile(
+                                    date: dateController.text.trim(),
+                                    title: titleController.text.trim(),
+                                    amount: "₹ ${amountController.text.trim()}",
+                                    isCredit: isCredit,
+                                  ),
+                                );
+                              });
+                              Navigator.pop(context);
+                            }
+                          },
+                          child: const Text("Add"),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+String _monthName(int month) {
+  const months = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+  ];
+  return months[month - 1];
+}
 
   @override
   Widget build(BuildContext context) {
@@ -166,14 +317,17 @@ class TransactionTab extends StatelessWidget {
             color: Colors.white,
             borderRadius: BorderRadius.circular(8),
           ),
-          child: const Row(
+          child: Row(
             children: [
-              Icon(Icons.search, size: 20, color: Colors.grey),
-              SizedBox(width: 8),
-              Expanded(
+              const Icon(Icons.search, size: 20, color: Colors.grey),
+              const SizedBox(width: 8),
+              const Expanded(
                 child: Text("Search...", style: TextStyle(color: Colors.grey)),
               ),
-              Icon(Icons.filter_list, size: 20, color: Colors.grey),
+              IconButton(
+                icon: const Icon(Icons.filter_list, size: 20, color: Colors.grey),
+                onPressed: _showTransactionBottomSheet,
+              ),
             ],
           ),
         ),
@@ -187,67 +341,19 @@ class TransactionTab extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Expanded(
-          child: ListView(
-            children: const [
-              TransactionTile(
-                date: "06 Jul 2025",
-                title:
-                    "TRANSFER TO 4897692162094 -\nUPI/DR/554801699627/Mr MAJI/YESB/Q108508118/UPI",
-                amount: "₹ 50.00",
-                isCredit: false,
-              ),
-              TransactionTile(
-                date: "06 Jul 2025",
-                title:
-                    "TRANSFER TO 4897692162094 -\nUPI/DR/518297778389/PAWAN KU/YESB/paytmqr5xc/UPI",
-                amount: "₹ 60.00",
-                isCredit: false,
-              ),
-              TransactionTile(
-                date: "05 Jul 2025",
-                title:
-                    "TRANSFER FROM 4897734162099 -\nUPI/CR/01643213006/Ankit KU/JIOP/8287712965/Payme",
-                amount: "₹ 200.00",
-                isCredit: true,
-              ),
-              TransactionTile(
-                date: "04 Jul 2025",
-                title:
-                    "TRANSFER TO 4897692162094 -\nUPI/DR/518295742391/MANSAB K/YESB/0113456251/UPI",
-                amount: "₹ 40.00",
-                isCredit: false,
-              ),
-              TransactionTile(
-                date: "02 Jul 2025",
-                title:
-                    "TRANSFER TO 4897692162094 -\nUPI/DR/518295742391/MANSAB K/YESB/0113456251/UPI",
-                amount: "₹ 400.00",
-                isCredit: false,
-              ),
-              TransactionTile(
-                date: "01 Jul 2025",
-                title:
-                    "TRANSFER TO 4897692162094 -\nUPI/DR/518295742391/MANSAB K/YESB/0113456251/UPI",
-                amount: "₹ 4000.00",
-                isCredit: true,
-              ),
-              TransactionTile(
-                date: "01 Jul 2025",
-                title:
-                    "TRANSFER TO 4897692162094 -\nUPI/DR/518295742391/MANSAB K/YESB/0113456251/UPI",
-                amount: "₹ 60.00",
-                isCredit: false,
-              ),
-              TransactionTile(
-                date: "01 Jul 2025",
-                title:
-                    "TRANSFER TO 4897692162094 -\nUPI/DR/518295742391/MANSAB K/YESB/0113456251/UPI",
-                amount: "₹ 90.00",
-                isCredit: true,
-              ),
-            ],
-          ),
-        ),
+  child: ListView.builder(
+    itemCount: _transactions.length,
+    itemBuilder: (context, index) {
+      final tx = _transactions[index];
+      return TransactionTile(
+        date: tx.date,
+        title: tx.title,
+        amount: tx.amount,
+        isCredit: tx.isCredit,
+      );
+    },
+  ),
+),
       ],
     );
   }
