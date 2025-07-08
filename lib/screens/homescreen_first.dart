@@ -59,7 +59,7 @@ class HomescreenFirst extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Image.asset("assets/appbarlogo.png",height:30,width: 150,fit: BoxFit.fill,), 
+              Image.asset("assets/appbarlogo.png",height:25,width: 120,fit: BoxFit.fill,), 
               SizedBox(height: 5,),
       const Text(
         "HI, AMIT KUMAR",
@@ -178,10 +178,10 @@ Padding(
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: const [
-                    _QuickIcon(icon: Icons.phone, label: "Mobile or\nContact"),
-                    _QuickIcon(icon: Icons.account_balance, label: "Bank A/C"),
-                    _QuickIcon(icon: Icons.qr_code, label: "My QR"),
-                    _QuickIcon(icon: Icons.receipt, label: "Bill Pay"),
+                    _QuickIcon(icon: 'assets/call.png', label: "Mobile or\nContact"),
+                    _QuickIcon(icon: 'assets/bank.png', label: "Bank A/C"),
+                    _QuickIcon(icon:'assets/qrCode.png', label: "My QR"),
+                    _QuickIcon(icon: 'assets/invoice.png', label: "Bill Pay"),
                   ],
                 ),
               ],
@@ -217,10 +217,10 @@ Padding(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: const [
-          _QuickIcon(icon: Icons.money, label: "YONO Cash"),
-          _QuickIcon(icon: Icons.currency_rupee, label: "Loans"),
-          _QuickIcon(icon: Icons.bar_chart, label: "Investments"),
-          _QuickIcon(icon: Icons.local_offer, label: "Best Offers"),
+          _QuickIcon(icon:'assets/pay.png', label: "YONO Cash"),
+          _QuickIcon(icon: 'assets/loan.png', label: "Loans"),
+          _QuickIcon(icon: 'assets/investment.png', label: "Investments"),
+          _QuickIcon(icon: 'asset/offer.png', label: "Best Offers"),
         ],
       ),
     );
@@ -271,7 +271,7 @@ Padding(
 }
 
 class _QuickIcon extends StatelessWidget {
-  final IconData icon;
+  final String icon;
   final String label;
 
   const _QuickIcon({required this.icon, required this.label});
@@ -280,7 +280,7 @@ class _QuickIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Icon(icon, size: 30, color: Colors.deepPurple),
+        Image.asset(icon, height: 30,width: 30,  color: Colors.deepPurple),
         const SizedBox(height: 6),
         SizedBox(width: 80, child: Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12))),
       ],
