@@ -9,31 +9,29 @@ class HomescreenSecond extends StatelessWidget {
   final Color primaryColor = const Color(0xFF5B0B8B);
   final Color accentColor = Color(0xFF982282);
 
-  final List<Map<String, dynamic>> topGridItems = const [
-    {'icon': Icons.account_balance_wallet_outlined, 'label': 'Accounts'},
-    {'icon': Icons.savings_outlined, 'label': 'Deposits'},
-    {'icon': Icons.currency_rupee, 'label': 'Loans'},
-    {'icon': Icons.show_chart, 'label': 'Investments'},
-    {'icon': Icons.health_and_safety, 'label': 'Insurance'},
-    {'icon': Icons.credit_card, 'label': 'Cards'},
-    {'icon': Icons.currency_exchange, 'label': 'YONO Pay'},
-    {'icon': Icons.qr_code_2, 'label': 'YONO Cash'},
+  final List<Map<String, dynamic>>  topGridItems = const [
+    {'icon': 'assets/account.png', 'label': 'Accounts'},
+    {'icon': 'assets/safetyBox.png', 'label': 'Deposits'},
+    {'icon': 'assets/loan.png', 'label': 'Loans'},
+    {'icon':  'assets/investment.png', 'label': 'Investments'},
+    {'icon':'assets/umbrella.png', 'label': 'Insurance'},
+    {'icon': 'assets/creditCard.png', 'label': 'Cards'},
+    {'icon': 'assets/pay.png', 'label': 'YONO Pay'},
+    {'icon': 'assets/account.png', 'label': 'YONO Cash'},
   ];
 
   final List<Map<String, dynamic>> bottomGridItems = const [
-    {'icon': Icons.shopping_cart, 'label': 'Shop & Order'},
-    {'icon': Icons.receipt_long, 'label': 'Bill Payment'},
-    {'icon': Icons.directions_bike, 'label': 'Mobility'},
-    {'icon': Icons.train, 'label': 'Train Ticket'},
-    {'icon': Icons.agriculture, 'label': 'YONO KRISHI'},
-    {'icon': Icons.new_releases, 'label': 'SIP ₹250'},
+    {'icon': 'assets/trolley.png', 'label': 'Shop & Order'},
+    {'icon': 'assets/bill.png', 'label': 'Bill Payment'},
+    {'icon': 'assets/pay.png', 'label': 'Mobility'},
+    {'icon': 'assets/train.png', 'label': 'Train Ticket'},
   ];
 
   final List<Map<String, dynamic>> bottomNavItems = const [
-    {'icon': Icons.settings, 'label': 'Service Request'},
-    {'icon': Icons.emoji_events, 'label': 'SBI Rewardz'},
-    {'icon': Icons.star, 'label': 'Best Offers'},
-    {'icon': Icons.link, 'label': 'Quick Links'},
+    {'icon': 'assets/service.png', 'label': 'Service Request'},
+    {'icon': 'assets/badge.png', 'label': 'SBI Rewardz'},
+    {'icon': 'assets/offer.png', 'label': 'Best Offers'},
+    {'icon': 'assets/link.png', 'label': 'Quick Links'},
   ];
 
   @override
@@ -41,6 +39,7 @@ class HomescreenSecond extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFFFF5F8),
       appBar: AppBar(
+<<<<<<< HEAD
         title: RichText(
           text: const TextSpan(
             children: [
@@ -63,6 +62,9 @@ class HomescreenSecond extends StatelessWidget {
             ],
           ),
         ),
+=======
+        title: Image.asset("assets/appbarlogo.png",height:25,width: 120,fit: BoxFit.fill,),
+>>>>>>> 3479e5a69ba9c559880104c913b5e2796954b9db
         centerTitle: true,
         automaticallyImplyLeading: false,
         leading: IconButton(
@@ -85,6 +87,58 @@ class HomescreenSecond extends StatelessWidget {
             _buildGrid(context, topGridItems),
             _buildPromoBanner(),
             _buildGrid(context, bottomGridItems),
+<<<<<<< HEAD
+=======
+            SizedBox(height:  15),
+            Row(
+              children: [
+                Container(
+                  width: MediaQuery.sizeOf(context).width*0.5,
+                  height: 100,
+                          decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: Colors.deepPurple, width: 0.5),
+                borderRadius: BorderRadius.circular(8)
+                          ),
+                          margin: EdgeInsets.symmetric(horizontal: 10),
+                          child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.agriculture, size: 26, color: Colors.deepPurple),
+                  const SizedBox(height: 8),
+                  Text(
+                    'YONO KRISHI',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w500),
+                  ),
+                ],
+                          ),
+                        ),
+                        Container(
+                          height: 100,
+                  width: MediaQuery.sizeOf(context).width*0.4,
+                          decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: Colors.deepPurple, width: 0.5),
+                borderRadius: BorderRadius.circular(8)
+                          ),
+                          child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.new_releases_outlined, size: 26, color: Colors.deepPurple),
+                  const SizedBox(height: 8),
+                  Text(
+                    'SIP stating at ₹ 250',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w500),
+                  ),
+                ],
+                          ),
+                        ),
+              ],
+            ),
+   
+>>>>>>> 3479e5a69ba9c559880104c913b5e2796954b9db
           ],
         ),
       ),
@@ -143,6 +197,7 @@ class HomescreenSecond extends StatelessWidget {
   }
 
   Widget _buildGrid(BuildContext context, List<Map<String, dynamic>> items) {
+<<<<<<< HEAD
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: GridView.builder(
@@ -176,9 +231,60 @@ class HomescreenSecond extends StatelessWidget {
             },
           );
         },
+=======
+  return Container(
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(8),
+    color: const Color(0xFFF7F0F0), 
+    ),
+    padding: const EdgeInsets.symmetric(horizontal: 8),
+    child: GridView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: items.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 4,
+        mainAxisSpacing: 1,
+        crossAxisSpacing: 1,
+        childAspectRatio: 0.88,
+>>>>>>> 3479e5a69ba9c559880104c913b5e2796954b9db
       ),
-    );
-  }
+      itemBuilder: (_, index) {
+        final label = items[index]['label'];
+        final icon = items[index]['icon'];
+
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Colors.grey.shade300, width: 0.5),
+            borderRadius: BorderRadius.circular(8)
+          ),
+          child: InkWell(
+            onTap: () {
+              if (label == 'YONO Pay') {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => YonoPayScreen()));
+              } else if (label == 'Accounts') {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => RelationshipOverviewScreen()));
+              }
+            },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(icon, height: 26,width: 26, color: Colors.deepPurple),
+                const SizedBox(height: 8),
+                Text(
+                  label,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w500),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    ),
+  );
+}
 
   Widget _buildPromoBanner() {
     return Padding(
@@ -229,14 +335,14 @@ class HomescreenSecond extends StatelessWidget {
     );
   }
 
-  Widget _bottomNavItem(IconData icon, String label) {
+  Widget _bottomNavItem(String icon, String label) {
     return InkWell(
       onTap: () {},
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            Icon(icon, size: 22, color: Colors.deepPurple),
+            Image.asset(icon,width: 22 ,height: 22, color: Colors.deepPurple),
             Text(label, style: const TextStyle(fontSize: 11)),
           ],
         ),
