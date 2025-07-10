@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:yono/screens/my_balance_screen.dart';
 import 'package:yono/screens/relationship_overview.dart';
 import 'package:yono/screens/yono_pay_screen.dart';
@@ -30,6 +31,7 @@ class HomescreenSecond extends StatelessWidget {
   final List<Map<String, dynamic>> bottomNavItems = const [
     {'icon': 'assets/service.png', 'label': 'Service Request'},
     {'icon': 'assets/badge.png', 'label': 'SBI Rewardz'},
+    {'icon': 'assets/UPI.png', 'label': ''},
     {'icon': 'assets/offer.png', 'label': 'Best Offers'},
     {'icon': 'assets/link.png', 'label': 'Quick Links'},
   ];
@@ -39,32 +41,7 @@ class HomescreenSecond extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFFFF5F8),
       appBar: AppBar(
-<<<<<<< HEAD
-        title: RichText(
-          text: const TextSpan(
-            children: [
-              TextSpan(
-                text: "yono ",
-                style: TextStyle(
-                  color: Colors.purple,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              TextSpan(
-                text: "SBI",
-                style: TextStyle(
-                  color: Colors.blueAccent,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-=======
         title: Image.asset("assets/appbarlogo.png",height:25,width: 120,fit: BoxFit.fill,),
->>>>>>> 3479e5a69ba9c559880104c913b5e2796954b9db
         centerTitle: true,
         automaticallyImplyLeading: false,
         leading: IconButton(
@@ -79,68 +56,129 @@ class HomescreenSecond extends StatelessWidget {
           const Icon(Icons.power_settings_new, color: Colors.black),
         ],
       ),
-      bottomNavigationBar: _buildBottomNavBar(),
-      body: SafeArea(
-        child: ListView(
-          children: [
-            _buildSearchBar(),
-            _buildGrid(context, topGridItems),
-            _buildPromoBanner(),
-            _buildGrid(context, bottomGridItems),
-<<<<<<< HEAD
-=======
-            SizedBox(height:  15),
-            Row(
-              children: [
-                Container(
-                  width: MediaQuery.sizeOf(context).width*0.5,
-                  height: 100,
-                          decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.deepPurple, width: 0.5),
-                borderRadius: BorderRadius.circular(8)
-                          ),
-                          margin: EdgeInsets.symmetric(horizontal: 10),
-                          child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+      // bottomNavigationBar: _buildBottomNavBar(),
+      body: PersistentTabView(
+        context,
+        // controller: _controller,
+        screens:   [
+            SingleChildScrollView(
+              child: Column(
                 children: [
-                  Icon(Icons.agriculture, size: 26, color: Colors.deepPurple),
-                  const SizedBox(height: 8),
-                  Text(
-                    'YONO KRISHI',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w500),
+                  _buildSearchBar(),
+                  _buildGrid(context, topGridItems),
+                  _buildPromoBanner(),
+                  _buildGrid(context, bottomGridItems),
+                  SizedBox(height:  15),
+                  Row(
+                    children: [
+                      Container(
+                        width: MediaQuery.sizeOf(context).width*0.5,
+                        height: 100,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: Colors.deepPurple, width: 0.5),
+                            borderRadius: BorderRadius.circular(8)
+                        ),
+                        margin: EdgeInsets.symmetric(horizontal: 10),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.agriculture, size: 26, color: Colors.deepPurple),
+                            const SizedBox(height: 8),
+                            Text(
+                              'YONO KRISHI',
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w500),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: 100,
+                        width: MediaQuery.sizeOf(context).width*0.4,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: Colors.deepPurple, width: 0.5),
+                            borderRadius: BorderRadius.circular(8)
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.new_releases_outlined, size: 26, color: Colors.deepPurple),
+                            const SizedBox(height: 8),
+                            Text(
+                              'SIP stating at ₹ 250',
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w500),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ],
-                          ),
-                        ),
-                        Container(
-                          height: 100,
-                  width: MediaQuery.sizeOf(context).width*0.4,
-                          decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.deepPurple, width: 0.5),
-                borderRadius: BorderRadius.circular(8)
-                          ),
-                          child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.new_releases_outlined, size: 26, color: Colors.deepPurple),
-                  const SizedBox(height: 8),
-                  Text(
-                    'SIP stating at ₹ 250',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w500),
-                  ),
-                ],
-                          ),
-                        ),
-              ],
+              ),
             ),
-   
->>>>>>> 3479e5a69ba9c559880104c913b5e2796954b9db
+          SizedBox(),
+          SizedBox(),
+          SizedBox(),
+          SizedBox(),
+
           ],
+        items: _navBarsItems(),
+        handleAndroidBackButtonPress: true,
+        resizeToAvoidBottomInset:false,
+        stateManagement: true,
+        hideNavigationBarWhenKeyboardAppears: true,
+        popBehaviorOnSelectedNavBarItemPress: PopBehavior.none,
+        hideOnScrollSettings: HideOnScrollSettings(
+          hideNavBarOnScroll: true,
+          // scrollControllers: _scrollControllers,
         ),
+        padding: const EdgeInsets.only(top: 8),
+        onWillPop: (context) async {
+          await showDialog(
+            context: context! ,
+            useSafeArea: true,
+            builder: (final context) => Container(
+              height: 50,
+              width: 50,
+              color: Colors.white,
+              child: ElevatedButton(
+                child: const Text("Close"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+          );
+          return false;
+        },
+        navBarStyle:  NavBarStyle.style15,
+        selectedTabScreenContext: (final context) {
+          // testContext = context;
+        },
+         // backgroundColor: Colors.grey ,
+        animationSettings: const NavBarAnimationSettings(
+          navBarItemAnimation: ItemAnimationSettings(
+            // Navigation Bar's items animation properties.
+            duration: Duration(milliseconds: 400),
+            curve: Curves.ease,
+          ),
+          screenTransitionAnimation: ScreenTransitionAnimationSettings(
+            // Screen transition animation on change of selected tab.
+            animateTabTransition: true,
+            duration: Duration(milliseconds: 300),
+            screenTransitionAnimationType:
+            ScreenTransitionAnimationType.fadeIn,
+          ),
+          onNavBarHideAnimation: OnHideAnimationSettings(
+            duration: Duration(milliseconds: 100),
+            curve: Curves.bounceInOut,
+          ),
+        ),
+        confineToSafeArea: true,
+        navBarHeight: kBottomNavigationBarHeight,
       ),
     );
   }
@@ -195,96 +233,94 @@ class HomescreenSecond extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildGrid(BuildContext context, List<Map<String, dynamic>> items) {
-<<<<<<< HEAD
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: GridView.builder(
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        itemCount: items.length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 4,
-          childAspectRatio: 0.85,
-        ),
-        itemBuilder: (_, index) {
-          final label = items[index]['label'];
+    const int crossAxisCount = 4;
 
-          return _FeatureCard(
-            icon: items[index]['icon'],
-            label: label,
-            onTap: () {
-              if (label == 'YONO Pay') {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => YonoPayScreen()),
-                );
-              } else if(label=='Accounts') {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => RelationshipOverviewScreen()),
-                );
-              }else{
+    return Container(
+      margin: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: Colors.white.withOpacity(0.8),
+      ),
+      padding: const EdgeInsets.all(4),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final width = constraints.maxWidth;
+          final itemWidth = width / crossAxisCount;
+          final itemHeight = itemWidth / 0.88;
 
-              }
+          return GridView.builder(
+            padding: EdgeInsets.zero,
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: items.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
+              childAspectRatio: 0.88,
+            ),
+            itemBuilder: (_, index) {
+              final label = items[index]['label'];
+              final icon = items[index]['icon'];
+
+              // Calculate row/column
+              final row = index ~/ crossAxisCount;
+              final col = index % crossAxisCount;
+
+              final isLastCol = col == crossAxisCount - 1;
+              final isLastRow = index >= items.length - crossAxisCount;
+
+              return Stack(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      if (label == 'YONO Pay') {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => YonoPayScreen()));
+                      } else if (label == 'Accounts') {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => RelationshipOverviewScreen()));
+                      }
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(icon, height: 26, width: 26, color: Colors.deepPurple),
+                          const SizedBox(height: 8),
+                          Text(
+                            label,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w500),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Add right border if not last column
+                  if (!isLastCol)
+                    Positioned(
+                      right: 0,
+                      top: 8,
+                      bottom: 8,
+                      child: Container(width: 0.7, color: Colors.grey.shade300),
+                    ),
+
+                  // Add bottom border if not last row
+                  if (!isLastRow)
+                    Positioned(
+                      left: 8,
+                      right: 8,
+                      bottom: 0,
+                      child: Container(height: 0.7, color: Colors.grey.shade300),
+                    ),
+                ],
+              );
             },
           );
         },
-=======
-  return Container(
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(8),
-    color: const Color(0xFFF7F0F0), 
-    ),
-    padding: const EdgeInsets.symmetric(horizontal: 8),
-    child: GridView.builder(
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      itemCount: items.length,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 4,
-        mainAxisSpacing: 1,
-        crossAxisSpacing: 1,
-        childAspectRatio: 0.88,
->>>>>>> 3479e5a69ba9c559880104c913b5e2796954b9db
       ),
-      itemBuilder: (_, index) {
-        final label = items[index]['label'];
-        final icon = items[index]['icon'];
-
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: Colors.grey.shade300, width: 0.5),
-            borderRadius: BorderRadius.circular(8)
-          ),
-          child: InkWell(
-            onTap: () {
-              if (label == 'YONO Pay') {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => YonoPayScreen()));
-              } else if (label == 'Accounts') {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => RelationshipOverviewScreen()));
-              }
-            },
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(icon, height: 26,width: 26, color: Colors.deepPurple),
-                const SizedBox(height: 8),
-                Text(
-                  label,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w500),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildPromoBanner() {
     return Padding(
@@ -325,7 +361,7 @@ class HomescreenSecond extends StatelessWidget {
             ...bottomNavItems
                 .sublist(0, 2)
                 .map((item) => _bottomNavItem(item['icon'], item['label'])),
-            const Spacer(),
+
             ...bottomNavItems
                 .sublist(2)
                 .map((item) => _bottomNavItem(item['icon'], item['label'])),
@@ -334,7 +370,77 @@ class HomescreenSecond extends StatelessWidget {
       ),
     );
   }
-
+  List<PersistentBottomNavBarItem>  _navBarsItems() => [
+    PersistentBottomNavBarItem(
+      icon:Image.asset(bottomNavItems[0]['icon']),
+      title:bottomNavItems[0]['label'],
+  activeColorPrimary: Colors.white,
+  inactiveColorPrimary: Colors.grey,
+  activeColorSecondary:  Colors.deepPurple,
+      routeAndNavigatorSettings: RouteAndNavigatorSettings(
+        initialRoute: "/",
+        routes: {
+        },
+      ),
+      textStyle: TextStyle(fontSize: 11),
+      iconSize: 20
+    ),
+    PersistentBottomNavBarItem(
+        icon:Image.asset(bottomNavItems[1]['icon']),
+        title:bottomNavItems[1]['label'],
+        activeColorPrimary: Colors.white,
+        inactiveColorPrimary: Colors.grey,
+        activeColorSecondary:  Colors.deepPurple,
+        textStyle: TextStyle(fontSize: 11),
+      iconSize: 20
+    ),
+    PersistentBottomNavBarItem(
+      icon: CircleAvatar(
+        backgroundColor: Colors.white,
+        radius: 50,
+        child:Container(
+          height: 40,
+            width: 40,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(
+                color: Colors.deepPurple,
+              ),
+              image: DecorationImage(
+                image: AssetImage(bottomNavItems[2]['icon'])
+              ),
+              borderRadius: BorderRadius.circular(50)
+            ),
+            padding: EdgeInsets.all(5),
+            // child: Image.asset(bottomNavItems[2]['icon'])
+        )
+      ),
+        title:bottomNavItems[2]['label'],
+        activeColorPrimary: Colors.white,
+        inactiveColorPrimary: Colors.grey,
+        activeColorSecondary:  Colors.deepPurple,
+        textStyle: TextStyle(fontSize: 11),
+      iconSize: 20
+    ),
+    PersistentBottomNavBarItem(
+        icon:Image.asset(bottomNavItems[3]['icon']),
+        title:bottomNavItems[3]['label'],
+        activeColorPrimary: Colors.white,
+        inactiveColorPrimary: Colors.grey,
+        activeColorSecondary:  Colors.deepPurple,
+        textStyle: TextStyle(fontSize: 11),
+      iconSize: 20
+    ),
+    PersistentBottomNavBarItem(
+        icon:Image.asset(bottomNavItems[4]['icon']),
+        title:bottomNavItems[4]['label'],
+      activeColorPrimary: Colors.white,
+      inactiveColorPrimary: Colors.grey,
+      activeColorSecondary:  Colors.deepPurple,
+        textStyle: TextStyle(fontSize: 11),
+      iconSize: 20
+    ),
+  ];
   Widget _bottomNavItem(String icon, String label) {
     return InkWell(
       onTap: () {},
