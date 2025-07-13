@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yono/screens/pay_success_screen.dart';
 
 class YonoPayScreen extends StatelessWidget {
   const YonoPayScreen({super.key});
@@ -6,7 +7,7 @@ class YonoPayScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF5F8),
+      backgroundColor:Color.fromARGB(255, 241, 235, 237),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0.5,
@@ -38,11 +39,14 @@ class YonoPayScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                children: const [
+                children: [
                   YonoPayTopCard(
                     icon: Icons.currency_rupee_rounded,
                     title: "Quick Transfer",
                     subtitle: "Upto ₹50000",
+                    onTap: (){
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PaySuccessScreen()));
+                    },
                   ),
                   SizedBox(width: 8),
                   YonoPayTopCard(
@@ -132,7 +136,7 @@ class YonoPayScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.03),
+                  color: Color.fromARGB(255, 241, 235, 237),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: Colors.deepPurple,width: 0.5),
                   boxShadow: const [

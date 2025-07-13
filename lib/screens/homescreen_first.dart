@@ -104,7 +104,6 @@ class _HomescreenFirstState extends State<HomescreenFirst>     with SingleTicker
             _buildQuickActionGrid(),
             SizedBox(height: 40),
             // _buildBanner(),
-            Spacer(),
             Container(
               width: double.infinity,
               padding: const EdgeInsets.only(top: 50),
@@ -220,12 +219,27 @@ class _HomescreenFirstState extends State<HomescreenFirst>     with SingleTicker
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
                   if (value.length == 6) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => HomescreenSecond(),
-                      ),
-                    );
+                   showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => Center(
+            child: CircularProgressIndicator(
+              color: Colors.deepPurple,
+              strokeWidth: 1,
+            ),
+          ),
+        );
+
+        // Delay then navigate
+        Future.delayed(Duration(seconds: 2), () {
+          Navigator.of(context).pop(); // Close loading dialog
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomescreenSecond(),
+            ),
+          );
+        });
                   }
                 },
               ),
