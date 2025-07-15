@@ -59,7 +59,7 @@ class _RelationshipOverviewScreenState extends State<RelationshipOverviewScreen>
           bottom: PreferredSize(
             preferredSize: Size.fromHeight(40),
             child: Container(
-              color: Colors.deepPurple,
+              color:  Color(0xFF6C00CB),
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               child: Text(
@@ -81,7 +81,7 @@ class _RelationshipOverviewScreenState extends State<RelationshipOverviewScreen>
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  border: Border.all(color: Colors.deepPurple, width: 0.5),
+                  border: Border.all(color:  Color(0xFF6C00CB), width: 0.5),
                 ),
                 child: TabBar(
                   indicatorSize: TabBarIndicatorSize.tab,
@@ -89,22 +89,22 @@ class _RelationshipOverviewScreenState extends State<RelationshipOverviewScreen>
                   indicator: UnderlineTabIndicator(
                     borderSide: BorderSide(
                       width: 3.0,
-                      color: Colors.deepPurple,
+                      color:  Colors.blue,
                     ),
                     // insets: EdgeInsets.symmetric(horizontal: 16.0), // Adjust if needed
                   ),
-                  labelColor: Colors.deepPurple,
+                  labelColor:  Colors.blue,
                   unselectedLabelColor: Colors.black,
                   // indicatorPadding: EdgeInsets.all(2),
                   tabs: [
                     _buildTabWithBorder(
-                      'Account',
+                      'My Balance',
                       '₹ 92.30',
                       rightBorder: true,
                     ),
-                    _buildTabWithBorder('Transaction', '', rightBorder: true),
+                    _buildTabWithBorder('My Deposits', '', rightBorder: true),
                     _buildTabWithBorder(
-                      'Spend Analysis',
+                      'My Borrowings',
                       '',
                       rightBorder: false,
                     ),
@@ -117,8 +117,8 @@ class _RelationshipOverviewScreenState extends State<RelationshipOverviewScreen>
               child: TabBarView(
                 children: [
                   buildBalanceTab(),
-                  Center(child: Text("Transaction")),
-                  Center(child: Text("Spend Analysis Placeholder")),
+                  Center(child: Text("My Deposits")),
+                  Center(child: Text("My Borrowings")),
                 ],
               ),
             ),
@@ -148,10 +148,12 @@ class _RelationshipOverviewScreenState extends State<RelationshipOverviewScreen>
         alignment: Alignment.center,
         child: Column(
           children: [
-            Text(label, style: TextStyle(fontSize: 15)),
+            SizedBox(height: 3,),
+            Text(label, style: TextStyle(fontSize: 15,fontWeight: FontWeight.w400)),
+            SizedBox(height: 3,),
             Text(
               label2,
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400,color: Colors.black),
             ),
           ],
         ),
@@ -179,7 +181,7 @@ class _RelationshipOverviewScreenState extends State<RelationshipOverviewScreen>
                 children: [
                   Icon(
                     Icons.savings_outlined,
-                    color: Colors.deepPurple,
+                    color:  Colors.blue,
                     size: 28,
                   ),
                   SizedBox(width: 12),
@@ -220,7 +222,7 @@ class _RelationshipOverviewScreenState extends State<RelationshipOverviewScreen>
                         ? Icons.visibility_outlined
                         : Icons.visibility_off_outlined,
                     size: 20,
-                    color: Colors.deepPurple,
+                    color:  Color(0xFF6C00CB),
                   ),
                 ),
               ),
@@ -244,7 +246,7 @@ class _RelationshipOverviewScreenState extends State<RelationshipOverviewScreen>
                   child: Icon(
                     Icons.arrow_forward_ios_outlined,
                     size: 20,
-                    color: Colors.deepPurple,
+                    color:  Color(0xFF6C00CB),
                   ),
                 ),
               ),

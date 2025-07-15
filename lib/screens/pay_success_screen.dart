@@ -52,7 +52,7 @@ class _PaySuccessScreenState extends State<PaySuccessScreen> {
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(40),
           child: Container(
-            color: Colors.deepPurple,
+            color: Color(0xFF6C00CB),
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: Text(
@@ -67,28 +67,15 @@ class _PaySuccessScreenState extends State<PaySuccessScreen> {
           ),
         ),
       ),
-      bottomSheet:  Padding(
+      bottomSheet:  Container(
+        color: Colors.white,
         padding: const EdgeInsets.symmetric(horizontal: 15),
         child: SizedBox(
-          height: 130,
+          height: 140,
           child: Column(
             children: [
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>RelationshipOverviewScreen())),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
-                    foregroundColor: Colors.white,
-                    minimumSize: Size(100, 40),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                  ),
-                  child: Text("Go to Relationships",style: TextStyle(letterSpacing: 0.5,fontSize: 14),),
-                ),
-              ), 
-              SizedBox(height: 8,),
+              Text('SBI Helpline : 1800111101 (toll-free)',style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.7),letterSpacing: 0.5)),
+              SizedBox(height: 10,),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -97,13 +84,29 @@ class _PaySuccessScreenState extends State<PaySuccessScreen> {
                     backgroundColor: Colors.white,
                     minimumSize: Size(100, 40),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
-                      side: BorderSide(
-                        color: Colors.deepPurple
-                      )
+                        borderRadius: BorderRadius.circular(6),
+                        side: BorderSide(
+                            color: Colors.deepPurple
+                        )
                     ),
                   ),
                   child: Text("Add Beneficiary for Future Payments",style: TextStyle(letterSpacing: 0.5,fontSize: 14),),
+                ),
+              ),
+              SizedBox(height: 8,),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>RelationshipOverviewScreen())),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF6C00CB),
+                    foregroundColor: Colors.white,
+                    minimumSize: Size(100, 40),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                  child: Text("Go to Relationships",style: TextStyle(letterSpacing: 0.5,fontSize: 14),),
                 ),
               ),
             ],
@@ -121,17 +124,17 @@ class _PaySuccessScreenState extends State<PaySuccessScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.check_circle_outline, color: Colors.blue, size: 48),
+                Icon(Icons.check_circle_outline, color: Colors.green, size: 48),
                 SizedBox(height: 12),
                 Text(
                   "Successful",
-                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 17),
+                  style: TextStyle(fontWeight: FontWeight.w400, fontSize: 17,color: Colors.black),
                 ),
                 SizedBox(height: 12),
                 Text(
                   "You have successfully paid Amit kumar\n₹ 1.00\n\n"
-                  "Remaining Balance in A/c\nXXXXXX7317 is ₹ 91.30.",
-                  style: TextStyle(fontSize: 14,color: Colors.deepPurple,letterSpacing: 0.5),
+                  "Remaining Balance in\nA/c XXXXXX7317 is ₹ 91.30.",
+                  style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.7),letterSpacing: 0.5),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -170,7 +173,7 @@ class _PaySuccessScreenState extends State<PaySuccessScreen> {
                   "You have paid ₹ 1.00\nsuccessfully to Charu.\n"
                   "Remaining Balance in A/c\nXXXXXX7317 is ₹ 90.30\n"
                   "UTR Number: SBIN525183617729",
-                  style: TextStyle(fontSize: 14,color: Colors.deepPurple,letterSpacing: 0.5),
+                  style: TextStyle(fontSize: 14,color: Color(0xFF6C00CB),letterSpacing: 0.5),
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 16),
@@ -197,7 +200,7 @@ class _PaySuccessScreenState extends State<PaySuccessScreen> {
                       ),
                     ),
                     alignment: Alignment.center,
-                    child: Text('OK',style: TextStyle(color: Colors.deepPurple,letterSpacing: 0.5,fontSize: 14),),
+                    child: Text('OK',style: TextStyle(color: Color(0xFF6C00CB),letterSpacing: 0.5,fontSize: 14),),
                   ),
                 ),
               ],

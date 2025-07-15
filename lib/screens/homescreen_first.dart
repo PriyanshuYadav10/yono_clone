@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:yono/screens/homescreen_second.dart';
 
@@ -22,6 +23,12 @@ class _HomescreenFirstState extends State<HomescreenFirst>     with SingleTicker
   @override
   void initState() {
     super.initState();
+    SystemChrome.setSystemUIOverlayStyle(
+       SystemUiOverlayStyle(
+        statusBarColor:  Color(0xFF000000), // Your desired color
+        statusBarIconBrightness: Brightness.dark, // For white icons
+      ),
+    );
     _position = 0.0;
     _scrollController = ScrollController();
 
@@ -126,8 +133,16 @@ class _HomescreenFirstState extends State<HomescreenFirst>     with SingleTicker
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.bottomLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFD73C6B), Color(0xFF5B2A91)],
+          end: Alignment.topRight,
+          colors: [
+            Color(0xFFFB0C67), // pinkish red
+            Color(0xFFCE1FB3), // magenta
+            Color(0xFF6C00CB), // violet/purple (top right)
+          ],
+          stops: [0.0, 0.75, 1.0], // controls how much space each color takes
+
+          // colors: [Color(0xFFD73C6B), Color(0xFF5B2A91)],
+         // colors: [Color(0xFFFB0C67),Color(0xFFCE1FB3), Color(0xFF6C00CB)],
         ),
       ),
       child: Row(
@@ -299,10 +314,11 @@ class _HomescreenFirstState extends State<HomescreenFirst>     with SingleTicker
             ),
           ],
         ),
+
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(Icons.remove_red_eye_outlined, size: 20),
+            Icon(Icons.remove_red_eye_outlined, size: 20, color:Color(0xFFCE1FB3).withOpacity(0.5),),
             SizedBox(width: 8),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -363,6 +379,8 @@ class _HomescreenFirstState extends State<HomescreenFirst>     with SingleTicker
             ),
           ),
         ),
+
+
         Positioned(
           bottom: 0,
           child: Container(
@@ -371,7 +389,13 @@ class _HomescreenFirstState extends State<HomescreenFirst>     with SingleTicker
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFF5B0B8B), Color(0xFF982282)],
+                colors: [
+                 // Color(0xFFFB0C67), // pinkish red
+                  Color(0xFFCE1FB3), // magenta
+                  Color(0xFF6C00CB), // violet/purple (top right)
+                  Color(0xFF6C00CB), // violet/purple (top right)
+                ],
+               // colors: [Color(0xFF5B0B8B), Color(0xFF982282)],
               ),
               borderRadius: BorderRadius.circular(24),
             ),
@@ -446,11 +470,11 @@ class _HomescreenFirstState extends State<HomescreenFirst>     with SingleTicker
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           const _BottomBarIcon(icon: Icons.lock, label: "Lock/Unlock App"),
-          Container(height: 25, width: 1, color: Colors.deepPurple),
+          Container(height: 15, width: 1, color: Color(0xFF6C00CB)),
           const _BottomBarIcon(icon: Icons.description, label: "T & C"),
-          Container(height: 25, width: 1, color: Colors.deepPurple),
+          Container(height: 15, width: 1, color: Color(0xFF6C00CB)),
           const _BottomBarIcon(icon: Icons.call, label: "Helpline"),
-          Container(height: 25, width: 1, color: Colors.deepPurple),
+          Container(height: 15, width: 1, color:Color(0xFF6C00CB)),
           const _BottomBarIcon(icon: Icons.more_vert, label: "More"),
         ],
       ),
@@ -469,7 +493,7 @@ class _QuickIcon extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Image.asset(icon, height: 30, width: 30),
+        Image.asset(icon, height: 30, width: 30,color: Color(0xFFCE1FB3).withOpacity(0.5),),
         const SizedBox(height: 6),
         SizedBox(
           width: 80,
@@ -494,12 +518,12 @@ class _BottomBarIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, size: 22, ),
+        Icon(icon, size: 15,color: Color(0xFF6C00CB), ),
         const SizedBox(width: 2),
         Text(
           label,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 11, ),
+          style: const TextStyle(fontSize: 10, ),
         ),
       ],
     );

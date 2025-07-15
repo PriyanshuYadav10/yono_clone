@@ -1,11 +1,14 @@
 import 'dart:io';
-
+import 'dart:typed_data';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/pdf.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:open_file/open_file.dart';
+import 'package:printing/printing.dart';
 class MyBalanceScreen extends StatelessWidget {
   const MyBalanceScreen({super.key});
 
@@ -55,7 +58,7 @@ class MyBalanceScreen extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 241, 235, 237),
+                  color: Color(0xFFD8BAF3).withOpacity(0.1),
                   border: Border.all(color: Colors.deepPurple, width: 0.2),
                 ),
                 child: Row(
@@ -94,9 +97,10 @@ class MyBalanceScreen extends StatelessWidget {
                     indicatorSize: TabBarIndicatorSize.tab,
                     labelPadding: EdgeInsets.zero,
                     indicator: BoxDecoration(
-                      color: Color.fromARGB(255, 241, 235, 237),
+                      color: Color(0xFFD8BAF3).withOpacity(0.1),
                     ),
                     labelColor: Colors.black,
+
                     unselectedLabelColor: Colors.grey[600],
                     indicatorPadding: EdgeInsets.all(2),
                     tabs: [
@@ -130,7 +134,7 @@ class MyBalanceScreen extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border(
             right: rightBorder
-                ? BorderSide(color: Colors.grey.shade400, width: 0.8)
+                ? BorderSide(color: Colors.grey.shade400, width: 0.9)
                 : BorderSide.none,
           ),
         ),
@@ -294,19 +298,155 @@ class _TransactionTabState extends State<TransactionTab> {
       },
     );
   }
- Map<String, dynamic> accountInfo = {
-    "name": "AMIT KUMAR",
-    "address": "S/O SUBHASH CHANDRA, VILL- PIPAL KA \nBASS, VIA- MANDAWA, 333704",
-    "accountNumber": "61195947317",
-    "branch": "MANDAWA",
-    "ifsc": "SBIN0031742",
-    "micr": "333002019",
-    "balance": "11638.05",
-    "balanceDate": "03 Jun 2025",
-    "date": "03 Jul 2025",
-  };
 
-void generateBankStatementPDF(Map<String, dynamic> accountInfo, List<TransactionTile> transactions) async {
+  String findEarliestTransactionDate(List<TransactionTile> transactions) {
+    final dateFormat = DateFormat('dd MMM yyyy');
+
+    // Convert string dates to DateTime and find the minimum
+    transactions.sort((a, b) =>
+        dateFormat.parse(a.date).compareTo(dateFormat.parse(b.date)));
+
+    return transactions.last.date; // The earliest date
+  }
+
+  Future<pw.ImageProvider> loadAssetImage(String path) async {
+    final ByteData data = await rootBundle.load(path);
+    final Uint8List bytes = data.buffer.asUint8List();
+    return pw.MemoryImage(bytes);
+  }
+  void generatePDF(Map<String, dynamic> accountInfo) async {
+    final pdf = pw.Document();
+    final logo = await loadAssetImage('assets/pdflogo.png');
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        margin: pw.EdgeInsets.all(20),
+        build: (pw.Context context) => [
+          pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+            children: [
+              pw.Text(''),
+              pw.Text(
+                'State Bank of India',
+                style: pw.TextStyle(
+                  fontSize: 22,
+                  fontWeight: pw.FontWeight.bold,
+                  color: PdfColors.blue,
+                ),
+              ),
+              pw.Image(logo, width: 70),
+            ]
+          ),
+          pw.SizedBox(height: 20),
+
+          // Account details section
+          pw.Row(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text("Account Name"),
+                    pw.SizedBox(height: 15),
+                    pw.Text("Address"),
+                    pw.Text("-"),
+                    pw.SizedBox(height: 15),
+                    pw.Text("Date"),
+                    pw.SizedBox(height: 15),
+                    pw.Text("Account Number"),
+                    pw.SizedBox(height: 15),
+                    pw.Text("Account Description"),
+                    pw.SizedBox(height: 15),
+                    pw.Text("Branch"),
+                    pw.SizedBox(height: 15),
+                    pw.Text("Drawing Power"),
+                    pw.SizedBox(height: 15),
+                    pw.Text("Interest Rate(%p.a.)"),
+                    pw.SizedBox(height: 15),
+                    pw.Text("CIF No."),
+                    pw.SizedBox(height: 15),
+                    pw.Text("IFSC Code"),
+                    pw.SizedBox(height: 15),
+                    pw.Text("MICR Code"),
+                    pw.SizedBox(height: 15),
+                    pw.Text("CKYC No."),
+                    pw.SizedBox(height: 15),
+                    pw.Text("Nomination Registered"),
+                    pw.SizedBox(height: 15),
+                    pw.Text("Balance as on"),
+                    pw.SizedBox(height: 15),
+                    pw.Text("Search for"),
+                    pw.SizedBox(height: 15),
+                  ],
+                ),
+                  pw.SizedBox(width: 70),
+                  pw.Expanded(
+                    child: pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Text("${accountInfo['name']}"),
+                        pw.SizedBox(height: 15),
+                        pw.Text("${accountInfo['address']}"),
+                        pw.SizedBox(height: 15),
+                        pw.Text("${accountInfo['date']}"),
+                        pw.SizedBox(height: 15),
+                        pw.Text("${accountInfo['accountNumber']}"),
+                        pw.SizedBox(height: 15),
+                        pw.Text("${accountInfo['description']}"),
+                        pw.SizedBox(height: 15),
+                        pw.Text("${accountInfo['branch']}"),
+                        pw.SizedBox(height: 15),
+                        pw.Text("0.00"),
+                        pw.SizedBox(height: 15),
+                        pw.Text("2.5000"),
+                        pw.SizedBox(height: 15),
+                        pw.Text("71176933309"),
+                        pw.SizedBox(height: 15),
+                        pw.Text("${accountInfo['ifsc']}"),
+                        pw.SizedBox(height: 15),
+                        pw.Text("${accountInfo['micr']}"),
+                        pw.SizedBox(height: 15),
+                        pw.Text("XXXXXXXXwords"),
+                        pw.SizedBox(height: 15),
+                        pw.Text("Yes"),
+                        pw.SizedBox(height: 15),
+                        pw.Text("${accountInfo['balanceDate']} INR ${accountInfo['balance']}"),
+                        pw.SizedBox(height: 15),
+                        pw.Text("${accountInfo['searchDate']}"),
+                        pw.SizedBox(height: 15),
+                      ],
+                    ),
+                  ),
+
+            ],
+          ),
+          pw.SizedBox(height: 20),
+          pw.Table.fromTextArray(
+            headers: ['Date', 'Details', 'Ref No./Cheque No.', 'Debit', 'Credit', 'Balance'],
+            data: _transactions.map((txn) {
+              return [
+                txn.date,
+                txn.title,
+                '',
+                txn.isCredit ? '-' : '₹${txn.amount}',
+                txn.isCredit ? '₹${txn.amount}' : '-',
+                '₹${11638.05}',
+              ];
+            }).toList(),
+            headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+            cellStyle: pw.TextStyle(fontSize: 9),
+            border: pw.TableBorder.all(color: PdfColors.black),
+            cellAlignment: pw.Alignment.centerLeft,
+            headerDecoration: pw.BoxDecoration(color:PdfColor.fromInt(0xFFF1EBED)),
+          ),
+        ],
+      ),
+    );
+
+    await Printing.layoutPdf(onLayout: (PdfPageFormat format) async => pdf.save());
+  }
+
+  void generateBankStatementPDF(Map<String, dynamic> accountInfo, List<TransactionTile> transactions) async {
   final pdf = pw.Document();
 pdf.addPage(
   pw.MultiPage(
@@ -352,10 +492,11 @@ pdf.addPage(
         pw.Text("Transaction Statement", style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
         pw.SizedBox(height: 10),
         pw.Table.fromTextArray(
-          headers: ["Date", "Details", "Debit", "Credit", "Balance"],
+          headers: ['Date', 'Details', 'Ref No./Cheque No.', 'Debit', 'Credit', 'Balance'],
           data: transactions.map((txn) => [
             txn.date,
             txn.title,
+            '',
             txn.isCredit == false ? "₹${txn.amount}" : "-",
             txn.isCredit == true ? "₹${txn.amount}" : "-",
             "₹92.30"
@@ -435,7 +576,34 @@ pdf.addPage(
                 GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onTap: (){
-                    generateBankStatementPDF(accountInfo, _transactions);
+                    var earliest= '';
+                    if (_transactions.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('No transactions available')),
+                      );
+                      return;
+                    }else{
+                      earliest = findEarliestTransactionDate(_transactions);
+                    }
+
+                    String? earliestDate = earliest;
+                      Map<String, dynamic> accountInfo = {
+                        "name": "AMIT KUMAR",
+                        "address": "S/O SUBHASH CHANDRA, VILL- PIPAL KA BASS, VIA- MANDAWA, 333704",
+                        "description": "Savings",
+                        "accountNumber": "61195947317",
+                        "branch": "MANDAWA",
+                        "ifsc": "SBIN0031742",
+                        "micr": "333002019",
+                        "balance": "11638.05",
+                        "balanceDate": DateFormat('dd MMM yyyy').format(DateTime.now()),
+                        "date": DateFormat('dd MMM yyyy').format(DateTime.now()),
+                        "searchDate":
+                        '${DateFormat('dd MMM yyyy').format(DateFormat('dd MMM yyyy').parse(earliestDate))} to ${DateFormat('dd MMM yyyy').format(DateTime.now())}',
+                      };
+                      generatePDF(accountInfo);
+
+
                   },
                   child: Image.asset('assets/download.png',width: 30,)),
                 SizedBox(width: 20,),
@@ -471,11 +639,8 @@ pdf.addPage(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
               color: Colors.white,
-              border: Border(
-              bottom: BorderSide(
-                color: Color.fromARGB(255, 241, 235, 237),
-                width: 3.0,          
-              ),
+              border: Border.all(
+              color: Color.fromARGB(255, 241, 235, 237), width: 3.0
             ),
               borderRadius: BorderRadius.circular(30),
             ),
@@ -562,24 +727,31 @@ class AccountTab extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Card(
-            color: Color.fromARGB(255, 241, 235, 237),
-            margin: const EdgeInsets.symmetric(vertical: 5),
+           // margin: const EdgeInsets.symmetric(vertical: 5),
             shape: RoundedRectangleBorder(
-              side: BorderSide(color: Colors.deepPurple, width: 0.5),
+             // side: BorderSide(color: Colors.deepPurple, width: 0.5),
               borderRadius: BorderRadius.circular(5),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: const [
-                  _BalanceRow(label: "Available balance", value: "₹ 92.30"),
-                  SizedBox(height: 3),
-                  _BalanceRow(label: "Hold / Lien Amount", value: "₹ 0.00"),
-                  SizedBox(height: 3),
-                  _BalanceRow(label: "Uncleared Balance", value: "₹ 0.00"),
-                  SizedBox(height: 3),
-                  _BalanceRow(label: "MOD Balance", value: "₹ 0.00"),
-                ],
+            child: Container(
+                decoration: BoxDecoration(
+                  color: Color(0xFFD8BAF3).withOpacity(0.1),
+
+                  borderRadius: BorderRadius.circular(5.8),
+
+                ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: const [
+                    _BalanceRow(label: "Available balance", value: "₹ 92.30"),
+                    SizedBox(height: 3),
+                    _BalanceRow(label: "Hold / Lien Amount", value: "₹ 0.00"),
+                    SizedBox(height: 3),
+                    _BalanceRow(label: "Uncleared Balance", value: "₹ 0.00"),
+                    SizedBox(height: 3),
+                    _BalanceRow(label: "MOD Balance", value: "₹ 0.00"),
+                  ],
+                ),
               ),
             ),
           ),
@@ -673,13 +845,15 @@ class AccountTab extends StatelessWidget {
                           return false;
                         },
                         child: AlertDialog(
+                          insetPadding: EdgeInsets.all(15),
+
                           backgroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6)
                           ),
                           content: SizedBox(
                             height: 260,
-                            width: double.infinity,
+                            width: MediaQuery.of(context).size.width,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [

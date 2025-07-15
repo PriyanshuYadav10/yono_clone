@@ -14,23 +14,32 @@ class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
    AnimationController? _controller;
    Animation<double>? _rippleAnimation;
+   bool _isVisible = false;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,     
-      duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: 5),
     )..repeat(reverse: false);
 
     _rippleAnimation = Tween<double>(begin: 0, end: 400).animate(
-      CurvedAnimation(parent: _controller!, curve: Curves.easeOut),
+      CurvedAnimation(parent: _controller!, curve: Curves.easeOut,),
     );
-      Timer(const Duration(seconds: 2 ), () {
+      Timer(const Duration(seconds: 5 ), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const HomescreenFirst()),
       );
+    });
+
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        setState(() {
+          _isVisible = true;
+        });
+      }
     });
 
   }
@@ -53,9 +62,15 @@ class _SplashScreenState extends State<SplashScreen>
             Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Color(0xFF6E0070), Color(0xFFE0006E)],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
+                  begin: Alignment.bottomLeft,
+                  end: Alignment.topRight,
+                  colors: [
+                    Color(0xFFFB0C67), // pinkish red
+                    Color(0xFFCE1FB3), // magenta
+                    Color(0xFF6C00CB), // violet/purple (top right)
+                  ],
+                  stops: [0.0, 0.7, 1.0], // controls how much space each color takes
+
                 ),
               ),
             ),
@@ -82,46 +97,46 @@ class _SplashScreenState extends State<SplashScreen>
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  Container(
+                  _isVisible ?  Container(
                     width: 400,
                     height: 400,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.white.withOpacity(0.1),
                     ),
-                  ),
-                  Container(
+                  ) : SizedBox(),
+                  _isVisible ?  Container(
                     width: 360,
                     height: 360,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.white.withOpacity(0.1),
                     ),
-                  ),
-                  Container(
+                  ) : SizedBox(),
+                  _isVisible ?  Container(
                     width: 320,
                     height: 320,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.white.withOpacity(0.1),
                     ),
-                  ),
-                  Container(
+                  ) : SizedBox(),
+                  _isVisible ?  Container(
                     width: 280,
                     height: 280,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.white.withOpacity(0.1),
                     ),
-                  ),
-                  Container(
+                  ) : SizedBox(),
+                  _isVisible ? Container(
                     width: 240,
                     height: 240,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.white.withOpacity(0.2),
                     ),
-                  ),
+                  ) : SizedBox(),
                   Container(
                     width: 200,
                     height: 200,
@@ -139,7 +154,7 @@ class _SplashScreenState extends State<SplashScreen>
             ),
             
             // Bottom curved white container with text
-            Positioned(
+            _isVisible ? Positioned(
               bottom: 0,
               left: 0,
               right: 0,
@@ -149,7 +164,7 @@ class _SplashScreenState extends State<SplashScreen>
                   height: size.height * 0.18,
                   color: Colors.white,
                   alignment: Alignment.bottomCenter,
-                  padding: EdgeInsets.only(bottom: size.height * 0.085),
+                  padding: EdgeInsets.only(bottom: size.height * 0.050),
                   child: const Text(
                     'Banking · Payments · Lifestyle',
                     style: TextStyle(
@@ -161,7 +176,7 @@ class _SplashScreenState extends State<SplashScreen>
                   ),
                 ),
               ),
-            ),
+            ) : SizedBox(),
           ],
         ),
       ),
