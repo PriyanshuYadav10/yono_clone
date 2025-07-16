@@ -126,6 +126,7 @@ class HomescreenSecond extends StatelessWidget {
             _buildGrid(context, topGridItems),
             _buildPromoBanner(),
             _buildGrid2(context, bottomGridItems),
+            _buildPromoBanner2(),
             // Add other widgets as needed
           ],
         ),
@@ -144,6 +145,13 @@ class HomescreenSecond extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(30),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 4,
+                    offset: Offset(0,2),
+                  ),
+                ]
               ),
               height: 45,
               child: Row(
@@ -163,6 +171,13 @@ class HomescreenSecond extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(30),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 4,
+                    offset: Offset(0,2),
+                  ),
+                ]
             ),
             child:  Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -191,7 +206,14 @@ class HomescreenSecond extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 16,vertical: 6),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        color: Colors.white.withOpacity(0.8),
+        color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 4,
+              offset: Offset(0,2),
+            ),
+          ]
       ),
       padding: const EdgeInsets.all(4),
       child: LayoutBuilder(
@@ -247,8 +269,8 @@ class HomescreenSecond extends StatelessWidget {
                         children: [
                           Image.asset(
                             icon,
-                            height: 26,
-                            width: 26,
+                            height: 30,
+                            width: 30,
                             color: Color(0xFFCE1FB3).withOpacity(0.5),
                           ),
                           const SizedBox(height: 8),
@@ -377,6 +399,13 @@ class HomescreenSecond extends StatelessWidget {
         decoration: BoxDecoration(
           color:  Color(0xFFFFFFFF),
           borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 4,
+                offset: Offset(0,2),
+              ),
+            ]
         ),
         padding:  EdgeInsets.all(4),
         child: Row(
@@ -405,6 +434,119 @@ class HomescreenSecond extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildPromoBanner2() {
+    return Padding(
+      padding:  EdgeInsets.symmetric(horizontal: 16,vertical: 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              height: 110,
+              padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                    color:  Color(0xFFFFFFFF),
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(color:Color(0xFFCE1FB3).withOpacity(0.5), width: 0.5),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 4,
+                        offset: Offset(0,2),
+                      ),
+                    ]
+                ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                         Icon(Icons.agriculture, size: 50, color: Color(0xFFCE1FB3).withOpacity(0.5)),
+                      Text(
+                        'YONO KRISHI',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 10),
+                  const Expanded(
+                    child: Text(
+                      'YONO KRISHI\nGrow your Agri Business',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Container(
+              height: 110,
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                  color:  Color(0xFFFFFFFF),
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(color:Color(0xFFCE1FB3).withOpacity(0.5), width: 0.5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 4,
+                      offset: Offset(0,2),
+                    ),
+                  ]
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Align(
+                    alignment:Alignment.centerRight,
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.circular(3)
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 8,vertical: 5),
+                      child:  Text(
+                        'New',
+                        style: TextStyle(fontSize: 12, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  Text(
+                    'Jan Nivesh SIP',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.black,
+                    ),
+                  ),
+                  Text(
+                    'Jan Jan Ka Nivesh',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 13,
+                      letterSpacing: 2,
+                      color: Colors.black54,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  const Text(
+                    'SIP starting at ₹250',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

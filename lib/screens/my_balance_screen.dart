@@ -639,8 +639,8 @@ pdf.addPage(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
               color: Colors.white,
-              border: Border.all(
-              color: Color.fromARGB(255, 241, 235, 237), width: 3.0
+              border: Border(
+              bottom: BorderSide(color: Color.fromARGB(255, 241, 235, 237), width: 3.0)
             ),
               borderRadius: BorderRadius.circular(30),
             ),
@@ -683,35 +683,37 @@ class TransactionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(date, style: const TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 4),
-                SizedBox(
-                  width: MediaQuery.sizeOf(context).width * 0.6,
-                  child: Text(title, style: const TextStyle(fontSize: 12)),
-                ),
-                const SizedBox(height: 4),
-              ],
-            ),
-            Text(
-              (isCredit ? "+ " : "- ") + amount,
-              style: TextStyle(
-                color: isCredit ? Colors.green : Colors.red,
-                fontWeight: FontWeight.bold,
+    return  Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(date, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 4),
+                  SizedBox(
+                    width: MediaQuery.sizeOf(context).width * 0.6,
+                    child: Text(title, style: const TextStyle(fontSize: 12)),
+                  ),
+                  const SizedBox(height: 4),
+                ],
               ),
-            ),
-          ],
-        ),
+              Text(
+                (isCredit ? "+ " : "- ") + amount,
+                style: TextStyle(
+                  color: isCredit ? Colors.green : Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          Divider(color:  Color.fromARGB(255, 241, 235, 237),)
+        ],
       ),
     );
   }

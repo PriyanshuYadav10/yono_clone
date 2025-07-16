@@ -59,7 +59,7 @@ class _RelationshipOverviewScreenState extends State<RelationshipOverviewScreen>
           bottom: PreferredSize(
             preferredSize: Size.fromHeight(40),
             child: Container(
-              color:  Color(0xFF6C00CB),
+              color:  Color(0xFF7523AF),
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               child: Text(
@@ -166,18 +166,18 @@ class _RelationshipOverviewScreenState extends State<RelationshipOverviewScreen>
     return Column(
       children: [
         Container(
-          height: 70,
+          height: 90,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
           ),
           padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Icon(
                     Icons.savings_outlined,
@@ -185,16 +185,21 @@ class _RelationshipOverviewScreenState extends State<RelationshipOverviewScreen>
                     size: 28,
                   ),
                   SizedBox(width: 12),
+                  Text(
+                    "Savings A/c",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "Savings A/c",
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
                       SizedBox(height: 4),
                       Text(
                         isShow ? "61195947317" : "XXXXXXX7317",
@@ -206,49 +211,49 @@ class _RelationshipOverviewScreenState extends State<RelationshipOverviewScreen>
                       ),
                     ],
                   ),
+                  GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () {
+                      setState(() {
+                        isShow = !isShow;
+                      });
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: Icon(
+                        !isShow
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
+                        size: 20,
+                        color:  Color(0xFF6C00CB),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: Text(
+                      "₹ 92.30",
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MyBalanceScreen()),
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: Icon(
+                        Icons.arrow_forward_ios_outlined,
+                        size: 20,
+                        color:  Color(0xFF6C00CB),
+                      ),
+                    ),
+                  ),
                 ],
-              ),
-              GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () {
-                  setState(() {
-                    isShow = !isShow;
-                  });
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: Icon(
-                    !isShow
-                        ? Icons.visibility_outlined
-                        : Icons.visibility_off_outlined,
-                    size: 20,
-                    color:  Color(0xFF6C00CB),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: Text(
-                  "₹ 92.30",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-              ),
-              GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => MyBalanceScreen()),
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: Icon(
-                    Icons.arrow_forward_ios_outlined,
-                    size: 20,
-                    color:  Color(0xFF6C00CB),
-                  ),
-                ),
               ),
             ],
           ),
