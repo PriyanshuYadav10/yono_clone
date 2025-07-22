@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:yono/screens/my_balance_screen.dart';
@@ -31,7 +34,7 @@ class HomescreenSecond extends StatelessWidget {
   final List<Map<String, dynamic>> bottomNavItems = const [
     {'icon': 'assets/service.png', 'label': 'Service Request'},
     {'icon': 'assets/badge.png', 'label': 'SBI Rewardz'},
-    {'icon': 'assets/UPI.png', 'label': ''},
+    {'icon': 'assets/UPI.png','icon2': 'assets/upi2.png', 'label': ''},
     {'icon': 'assets/offer.png', 'label': 'Best Offers'},
     {'icon': 'assets/link.png', 'label': 'Quick Links'},
   ];
@@ -113,7 +116,31 @@ class HomescreenSecond extends StatelessWidget {
           ),
         ),
       ),
-
+      floatingActionButton:  Container(
+        width: 130,
+        height: 40,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+        margin: EdgeInsets.only(bottom: 60),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black54,
+              blurRadius: 4,
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            Text("Scan QR", style: TextStyle()),
+            SizedBox(width: 8),
+            Icon(Icons.qr_code_scanner, ),
+          ],
+        ),
+      ),
     );
   }
   Widget _buildHomeScreen(BuildContext context) {
@@ -127,7 +154,28 @@ class HomescreenSecond extends StatelessWidget {
             _buildPromoBanner(),
             _buildGrid2(context, bottomGridItems),
             _buildPromoBanner2(),
-            // Add other widgets as needed
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
+              child: CarouselSlider(
+                options: CarouselOptions(
+                  height: 170,
+                  autoPlay: true,
+                  enlargeCenterPage: true,
+                  viewportFraction: 1.2,
+                ),
+                items: [
+                  'assets/banner.jpg',
+                  'assets/banner1.jpg',
+                  'assets/banner2.jpg',
+                ].map((iconPath) {
+                  return Builder(
+                    builder: (BuildContext context) {
+                      return Image.asset(iconPath, width: MediaQuery.sizeOf(context).width, height: 170,fit: BoxFit.fill);
+                    },
+                  );
+                }).toList(),
+              ),
+            )
           ],
         ),
       ),
@@ -576,21 +624,9 @@ class HomescreenSecond extends StatelessWidget {
       iconSize: 28,
     ),
     PersistentBottomNavBarItem(
-      icon: Container(
-        height: 80,
-        width: 80,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.white,
-          border: Border.all(
-            color: Color(0xFFCE1FB3).withOpacity(0.6),
-            width: 2,
-          ),
-          image: DecorationImage(
-            image: AssetImage(bottomNavItems[2]['icon']),
-            fit: BoxFit.contain,
-          ),
-        ),
+      icon: SlidingIconInsideContainer(
+        icon1Path: bottomNavItems[2]['icon'],
+        icon2Path: bottomNavItems[2]['icon2'],
       ),
       title: bottomNavItems[2]['label'],
       activeColorPrimary: Colors.white,
@@ -626,4 +662,94 @@ class HomescreenSecond extends StatelessWidget {
   ];
 
 
+}
+
+class SlidingIconInsideContainer extends StatefulWidget {
+  final String icon1Path;
+  final String icon2Path;
+
+  const SlidingIconInsideContainer({
+    Key? key,
+    required this.icon1Path,
+    required this.icon2Path,
+  }) : super(key: key);
+
+  @override
+  State<SlidingIconInsideContainer> createState() =>
+      _SlidingIconInsideContainerState();
+}
+
+class _SlidingIconInsideContainerState
+    extends State<SlidingIconInsideContainer> with TickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<Offset> _animation;
+
+  bool _showFirstIcon = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+
+    _animation = Tween<Offset>(
+      begin: const Offset(-0.5, 0),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    ));
+
+    _startLoop();
+  }
+
+  Future<void> _startLoop() async {
+    while (mounted) {
+      await _controller.forward();
+      await Future.delayed(const Duration(seconds: 1));
+      setState(() => _showFirstIcon = !_showFirstIcon);
+      _controller.reset();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 80,
+      width: 80,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.white,
+        border: Border.all(
+          color: const Color(0xFFCE1FB3).withOpacity(0.6),
+          width: 2,
+        ),
+      ),
+      child: ClipOval(
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            SlideTransition(
+              position: _animation,
+              child: Image.asset(
+                _showFirstIcon ? widget.icon1Path : widget.icon2Path,
+                height:!_showFirstIcon? 20:40,
+                width: !_showFirstIcon? 20:40,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

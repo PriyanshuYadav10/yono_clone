@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yono/screens/my_balance_screen.dart';
 
 class RelationshipOverviewScreen extends StatefulWidget {
@@ -14,9 +15,62 @@ class _RelationshipOverviewScreenState extends State<RelationshipOverviewScreen>
   @override
   void initState() {
     _tabController = TabController(length: 3, vsync: this);
+    _loadBranchData();
     super.initState();
   }
 
+  Future<void> _loadBranchData() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Default values
+    const defaultBranchName = "MANDAWA";
+    const defaultIfscCode = "SBIN0031742";
+    const defaultAddress = "WARD NO 6 BISSAU \nCIRCLE, MANDAWA,DISTT.JHUNJHUNU";
+    const defaultEmail = "sbi.31742@sbi.co.in";
+    const defaultBalance = "92.30";
+
+    // Check each key: if missing OR empty, set default
+    if (!prefs.containsKey('branchName') || (prefs.getString('branchName')?.isEmpty ?? true)) {
+      await prefs.setString('branchName', defaultBranchName);
+    }
+
+    if (!prefs.containsKey('ifscCode') || (prefs.getString('ifscCode')?.isEmpty ?? true)) {
+      await prefs.setString('ifscCode', defaultIfscCode);
+    }
+
+    if (!prefs.containsKey('address') || (prefs.getString('address')?.isEmpty ?? true)) {
+      await prefs.setString('address', defaultAddress);
+    }
+
+    if (!prefs.containsKey('email') || (prefs.getString('email')?.isEmpty ?? true)) {
+      await prefs.setString('email', defaultEmail);
+    }
+
+    if (!prefs.containsKey('balance') || (prefs.getString('balance')?.isEmpty ?? true)) {
+      await prefs.setString('balance', defaultBalance);
+    }
+
+    // Set controllers from shared prefs
+    setState(() {
+      branchController.text = prefs.getString('branchName') ?? defaultBranchName;
+      ifscController.text = prefs.getString('ifscCode') ?? defaultIfscCode;
+      addressController.text = prefs.getString('address') ?? defaultAddress;
+      emailController.text = prefs.getString('email') ?? defaultEmail;
+      balanceController.text = prefs.getString('balance') ?? defaultBalance;
+    });
+  }
+
+
+
+  _saveBranchData() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('branchName', branchController.text);
+    await prefs.setString('ifscCode', ifscController.text);
+    await prefs.setString('address', addressController.text);
+    await prefs.setString('email', emailController.text);
+    await prefs.setString('balance', balanceController.text.toString());
+    await _loadBranchData(); // reload to update UI
+  }
   @override
   void dispose() {
     _tabController.dispose();
@@ -99,7 +153,7 @@ class _RelationshipOverviewScreenState extends State<RelationshipOverviewScreen>
                   tabs: [
                     _buildTabWithBorder(
                       'My Balance',
-                      '₹ 92.30',
+                      '₹ ${balanceController.text}',
                       rightBorder: true,
                     ),
                     _buildTabWithBorder('My Deposits', '', rightBorder: true),
@@ -206,7 +260,7 @@ class _RelationshipOverviewScreenState extends State<RelationshipOverviewScreen>
                         style: TextStyle(fontSize: 13, color: Colors.black87),
                       ),
                       Text(
-                        "MANDAWA",
+                        branchController.text,
                         style: TextStyle(fontSize: 13, color: Colors.black54),
                       ),
                     ],
@@ -232,7 +286,7 @@ class _RelationshipOverviewScreenState extends State<RelationshipOverviewScreen>
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20),
                     child: Text(
-                      "₹ 92.30",
+                      "₹ ${balanceController.text}",
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ),

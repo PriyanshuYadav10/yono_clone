@@ -3,7 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yono/screens/homescreen_second.dart';
+
+import 'my_balance_screen.dart';
 
 class HomescreenFirst extends StatefulWidget {
   const HomescreenFirst({super.key});
@@ -23,6 +26,7 @@ class _HomescreenFirstState extends State<HomescreenFirst>     with SingleTicker
   @override
   void initState() {
     super.initState();
+    _loadBranchData();
     SystemChrome.setSystemUIOverlayStyle(
        SystemUiOverlayStyle(
         statusBarColor:  Color(0xFF000000), // Your desired color
@@ -50,6 +54,65 @@ class _HomescreenFirstState extends State<HomescreenFirst>     with SingleTicker
     });
   }
 
+  Future<void> _loadBranchData() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Default values
+    const defaultBranchName = "MANDAWA";
+    const defaultIfscCode = "SBIN0031742";
+    const defaultAddress = "WARD NO 6 BISSAU \nCIRCLE, MANDAWA,DISTT.JHUNJHUNU";
+    const defaultEmail = "sbi.31742@sbi.co.in";
+    const defaultBalance = "92.30";
+    const defaultName = "AMIT KUMAR";
+
+    // Check each key: if missing OR empty, set default
+    if (!prefs.containsKey('branchName') || (prefs.getString('branchName')?.isEmpty ?? true)) {
+      await prefs.setString('branchName', defaultBranchName);
+    }
+
+    if (!prefs.containsKey('ifscCode') || (prefs.getString('ifscCode')?.isEmpty ?? true)) {
+      await prefs.setString('ifscCode', defaultIfscCode);
+    }
+
+    if (!prefs.containsKey('address') || (prefs.getString('address')?.isEmpty ?? true)) {
+      await prefs.setString('address', defaultAddress);
+    }
+
+    if (!prefs.containsKey('email') || (prefs.getString('email')?.isEmpty ?? true)) {
+      await prefs.setString('email', defaultEmail);
+    }
+
+    if (!prefs.containsKey('balance') || (prefs.getString('balance')?.isEmpty ?? true)) {
+      await prefs.setString('balance', defaultBalance);
+    }
+
+    if (!prefs.containsKey('name') || (prefs.getString('name')?.isEmpty ?? true)) {
+      await prefs.setString('name', defaultName);
+    }
+
+    // Set controllers from shared prefs
+    setState(() {
+      branchController.text = prefs.getString('branchName') ?? defaultBranchName;
+      ifscController.text = prefs.getString('ifscCode') ?? defaultIfscCode;
+      addressController.text = prefs.getString('address') ?? defaultAddress;
+      emailController.text = prefs.getString('email') ?? defaultEmail;
+      balanceController.text = prefs.getString('balance') ?? defaultBalance;
+      nameController.text = prefs.getString('name') ?? defaultName;
+    });
+  }
+
+
+
+  _saveBranchData() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('branchName', branchController.text);
+    await prefs.setString('ifscCode', ifscController.text);
+    await prefs.setString('address', addressController.text);
+    await prefs.setString('email', emailController.text);
+    await prefs.setString('balance', balanceController.text.toString());
+    await prefs.setString('name', nameController.text.toString());
+    await _loadBranchData(); // reload to update UI
+  }
   @override
   void dispose() {
     _timer.cancel();
@@ -161,19 +224,51 @@ class _HomescreenFirstState extends State<HomescreenFirst>     with SingleTicker
                 fit: BoxFit.fill,
               ),
               SizedBox(height: 5),
-              const Text(
-                "HI, AMIT KUMAR",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
+              Row(
+                children: [
+                   Text(
+                    "HI, ",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  SizedBox(
+                      width:200,
+                      child: _buildTextField(nameController,14,(value) => _saveBranchData())),
+                ],
               ),
+
             ],
           ),
           Spacer(),
           Icon(Icons.location_on, color: Colors.white),
         ],
+      ),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller,dynamic fontSize, onTap, {int maxLines = 1,Color? color,}) {
+    return TextField(
+      controller: controller,
+      maxLines: maxLines,
+      decoration: const InputDecoration(
+        isDense: true,
+        contentPadding: EdgeInsets.zero,
+        border: InputBorder.none, // removes border
+        enabledBorder: InputBorder.none,
+        focusedBorder: InputBorder.none,
+        fillColor: Colors.transparent, // no background
+        filled: true,
+        hintStyle: TextStyle(color: Colors.grey),
+      ),
+      onSubmitted:onTap,
+      style: TextStyle(
+          fontWeight: FontWeight.w500,
+          fontSize:fontSize?.toDouble(),
+          letterSpacing: 0.5,
+          color: color?? Colors.white
       ),
     );
   }

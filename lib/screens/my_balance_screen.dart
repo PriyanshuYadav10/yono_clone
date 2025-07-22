@@ -9,9 +9,74 @@ import 'package:pdf/pdf.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:open_file/open_file.dart';
 import 'package:printing/printing.dart';
-class MyBalanceScreen extends StatelessWidget {
+import 'package:shared_preferences/shared_preferences.dart';
+class MyBalanceScreen extends StatefulWidget {
   const MyBalanceScreen({super.key});
 
+  @override
+  State<MyBalanceScreen> createState() => _MyBalanceScreenState();
+}
+
+class _MyBalanceScreenState extends State<MyBalanceScreen> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    _loadBranchData();
+    super.initState();
+  }
+  Future<void> _loadBranchData() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Default values
+    const defaultBranchName = "MANDAWA";
+    const defaultIfscCode = "SBIN0031742";
+    const defaultAddress = "WARD NO 6 BISSAU \nCIRCLE, MANDAWA,DISTT.JHUNJHUNU";
+    const defaultEmail = "sbi.31742@sbi.co.in";
+    const defaultBalance = "92.30";
+
+    // Check each key: if missing OR empty, set default
+    if (!prefs.containsKey('branchName') || (prefs.getString('branchName')?.isEmpty ?? true)) {
+      await prefs.setString('branchName', defaultBranchName);
+    }
+
+    if (!prefs.containsKey('ifscCode') || (prefs.getString('ifscCode')?.isEmpty ?? true)) {
+      await prefs.setString('ifscCode', defaultIfscCode);
+    }
+
+    if (!prefs.containsKey('address') || (prefs.getString('address')?.isEmpty ?? true)) {
+      await prefs.setString('address', defaultAddress);
+    }
+
+    if (!prefs.containsKey('email') || (prefs.getString('email')?.isEmpty ?? true)) {
+      await prefs.setString('email', defaultEmail);
+    }
+
+    if (!prefs.containsKey('balance') || (prefs.getString('balance')?.isEmpty ?? true)) {
+      await prefs.setString('balance', defaultBalance);
+    }
+
+    // Set controllers from shared prefs
+    setState(() {
+      branchController.text = prefs.getString('branchName') ?? defaultBranchName;
+      ifscController.text = prefs.getString('ifscCode') ?? defaultIfscCode;
+      addressController.text = prefs.getString('address') ?? defaultAddress;
+      emailController.text = prefs.getString('email') ?? defaultEmail;
+      balanceController.text = prefs.getString('balance') ?? defaultBalance;
+    });
+  }
+
+
+
+  _saveBranchData() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('branchName', branchController.text);
+    await prefs.setString('ifscCode', ifscController.text);
+    await prefs.setString('address', addressController.text);
+    await prefs.setString('email', emailController.text);
+    await prefs.setString('balance', balanceController.text.toString());
+    await _loadBranchData(); // reload to update UI
+  }
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -64,13 +129,21 @@ class MyBalanceScreen extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      "₹ 92.30",
-                      style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                    SizedBox(
+                        width:250,
+                        child: Row(
+                          children: [
+                            Text('₹',style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize:25,
+                                letterSpacing: 0.5,
+                                color:  Colors.black
+                            ),),SizedBox(width: 2,),
+                            SizedBox(
+                                width:230,
+                                child: _buildTextField(balanceController,25,(value) => _saveBranchData())),
+                          ],
+                        )),
                     Row(
                       children: [
                         Text(
@@ -112,12 +185,12 @@ class MyBalanceScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              const Expanded(
+              Expanded(
                 child: TabBarView(
                   children: [
                     AccountTab(),
-                    TransactionTab(),
-                    Center(child: Text("Spend Analysis Placeholder")),
+                    const TransactionTab(),
+                    const Center(child: Text("Spend Analysis Placeholder")),
                   ],
                 ),
               ),
@@ -588,14 +661,14 @@ pdf.addPage(
 
                     String? earliestDate = earliest;
                       Map<String, dynamic> accountInfo = {
-                        "name": "AMIT KUMAR",
-                        "address": "S/O SUBHASH CHANDRA, VILL- PIPAL KA BASS, VIA- MANDAWA, 333704",
+                        "name": nameController.text,
+                        "address": addressController.text,
                         "description": "Savings",
                         "accountNumber": "61195947317",
-                        "branch": "MANDAWA",
-                        "ifsc": "SBIN0031742",
+                        "branch": branchController.text,
+                        "ifsc": ifscController.text,
                         "micr": "333002019",
-                        "balance": "11638.05",
+                        "balance": balanceController.text,
                         "balanceDate": DateFormat('dd MMM yyyy').format(DateTime.now()),
                         "date": DateFormat('dd MMM yyyy').format(DateTime.now()),
                         "searchDate":
@@ -719,9 +792,20 @@ class TransactionTile extends StatelessWidget {
   }
 }
 
-class AccountTab extends StatelessWidget {
-  const AccountTab({super.key});
+TextEditingController branchController = TextEditingController();
+TextEditingController ifscController = TextEditingController();
+TextEditingController addressController = TextEditingController();
+TextEditingController emailController = TextEditingController();
+TextEditingController balanceController = TextEditingController();
+TextEditingController nameController = TextEditingController();
+class AccountTab extends StatefulWidget {
+   AccountTab({super.key});
 
+  @override
+  State<AccountTab> createState() => _AccountTabState();
+}
+
+class _AccountTabState extends State<AccountTab> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -826,14 +910,9 @@ class AccountTab extends StatelessWidget {
                     style: TextStyle(fontWeight: FontWeight.w300, fontSize: 12),
                   ),
                   SizedBox(height: 3),
-                  Text(
-                    "MANDAWA",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
+                  SizedBox(
+                    width: MediaQuery.sizeOf(context).width*0.65,
+                      child: _buildTextField(branchController,14,(value) => _saveBranchData())),
                 ],
               ),
               GestureDetector(
@@ -847,14 +926,14 @@ class AccountTab extends StatelessWidget {
                           return false;
                         },
                         child: AlertDialog(
-                          insetPadding: EdgeInsets.all(15),
+                          insetPadding: EdgeInsets.all(13),
 
                           backgroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6)
                           ),
                           content: SizedBox(
-                            height: 260,
+                            height: 250,
                             width: MediaQuery.of(context).size.width,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -879,57 +958,30 @@ class AccountTab extends StatelessWidget {
                                         style: TextStyle(fontWeight: FontWeight.w400, fontSize: 13,letterSpacing: 0.5),
                                       ),
                                       const SizedBox(height: 3),
-                                      const Text(
-                                        "MANDAWA",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 14,
-                                          letterSpacing: 0.5,
-                                        ),
-                                      ),
+                                      _buildTextField(branchController,14,(value) => _saveBranchData()),
                                       const SizedBox(height: 10),
                                       const Text(
                                         "IFSC Code",
                                         style: TextStyle(fontWeight: FontWeight.w400, fontSize: 13,letterSpacing: 0.5),
                                       ),
                                       const SizedBox(height: 3),
-                                      const Text(
-                                        "SBIN0031742",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 14,
-                                          letterSpacing: 0.5,
-                                        ),
-                                      ),
+                                _buildTextField(ifscController,14,(value) => _saveBranchData()),
                                       const SizedBox(height: 10),
                                       const Text(
                                         "Address",
                                         style:  TextStyle(fontWeight: FontWeight.w400, fontSize: 13,letterSpacing: 0.5),
                                       ),
                                       const SizedBox(height: 3),
-                                      const Text(
-                                        "WARD NO 6 BISSAU \nCIRCLE, MANDAWA,DISTT.JHUNJHUNU",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 14,
-                                          letterSpacing: 0.5,
-                                        ),
-                                      ),
+
+                                _buildTextField(addressController,14,(value) => _saveBranchData(),maxLines: 2),
                                       const SizedBox(height: 10),
                                       const Text(
                                         "Email ID",
                                         style: TextStyle(fontWeight: FontWeight.w400, fontSize: 13,letterSpacing: 0.5),
                                       ),
                                       const SizedBox(height: 3),
-                                      const Text(
-                                        "sbi.31742@sbi.co.in",
-                                        style: TextStyle(
-                                          color: Colors.deepPurple,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 14,
-                                          letterSpacing: 0.5,
-                                        ),
-                                      ),
+
+                                _buildTextField(emailController,14,(value) => _saveBranchData(),color: Colors.deepPurple),
                               ],
                             ),
                           ),
@@ -983,6 +1035,81 @@ class AccountTab extends StatelessWidget {
       ),
     );
   }
+  @override
+  void initState() {
+    // TODO: implement initState
+    _loadBranchData();
+    super.initState();
+  }
+  Future<void> _loadBranchData() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Default values
+    const defaultBranchName = "MANDAWA";
+    const defaultIfscCode = "SBIN0031742";
+    const defaultAddress = "WARD NO 6 BISSAU \nCIRCLE, MANDAWA,DISTT.JHUNJHUNU";
+    const defaultEmail = "sbi.31742@sbi.co.in";
+
+    // Check each key: if missing OR empty, set default
+    if (!prefs.containsKey('branchName') || (prefs.getString('branchName')?.isEmpty ?? true)) {
+      await prefs.setString('branchName', defaultBranchName);
+    }
+
+    if (!prefs.containsKey('ifscCode') || (prefs.getString('ifscCode')?.isEmpty ?? true)) {
+      await prefs.setString('ifscCode', defaultIfscCode);
+    }
+
+    if (!prefs.containsKey('address') || (prefs.getString('address')?.isEmpty ?? true)) {
+      await prefs.setString('address', defaultAddress);
+    }
+
+    if (!prefs.containsKey('email') || (prefs.getString('email')?.isEmpty ?? true)) {
+      await prefs.setString('email', defaultEmail);
+    }
+
+    // Set controllers from shared prefs
+    setState(() {
+      branchController.text = prefs.getString('branchName') ?? defaultBranchName;
+      ifscController.text = prefs.getString('ifscCode') ?? defaultIfscCode;
+      addressController.text = prefs.getString('address') ?? defaultAddress;
+      emailController.text = prefs.getString('email') ?? defaultEmail;
+    });
+  }
+
+
+
+  _saveBranchData() async {
+     final prefs = await SharedPreferences.getInstance();
+     await prefs.setString('branchName', branchController.text);
+     await prefs.setString('ifscCode', ifscController.text);
+     await prefs.setString('address', addressController.text);
+     await prefs.setString('email', emailController.text);
+     await _loadBranchData(); // reload to update UI
+   }
+}
+
+Widget _buildTextField(TextEditingController controller,dynamic fontSize, onTap, {int maxLines = 1,Color? color,}) {
+  return TextField(
+    controller: controller,
+    maxLines: maxLines,
+    decoration: const InputDecoration(
+      isDense: true,
+      contentPadding: EdgeInsets.zero,
+      border: InputBorder.none, // removes border
+      enabledBorder: InputBorder.none,
+      focusedBorder: InputBorder.none,
+      fillColor: Colors.transparent, // no background
+      filled: true,
+      hintStyle: TextStyle(color: Colors.grey),
+    ),
+    onSubmitted:onTap,
+    style: TextStyle(
+      fontWeight: FontWeight.w500,
+      fontSize:fontSize?.toDouble(),
+      letterSpacing: 0.5,
+      color: color?? Colors.black
+    ),
+  );
 }
 
 class _BalanceRow extends StatelessWidget {
