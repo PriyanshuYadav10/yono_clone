@@ -256,7 +256,7 @@ class _RelationshipOverviewScreenState extends State<RelationshipOverviewScreen>
                     children: [
                       SizedBox(height: 4),
                       Text(
-                        isShow ? "61195947317" : "XXXXXXX7317",
+                        isShow ? "6119594${accountController.text}" : "XXXXXXX${accountController.text}",
                         style: TextStyle(fontSize: 13, color: Colors.black87),
                       ),
                       Text(

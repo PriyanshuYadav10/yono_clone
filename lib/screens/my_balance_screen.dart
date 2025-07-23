@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/services.dart' show rootBundle, TextInputFormatter, FilteringTextInputFormatter;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -33,6 +33,7 @@ class _MyBalanceScreenState extends State<MyBalanceScreen> {
     const defaultIfscCode = "SBIN0031742";
     const defaultAddress = "WARD NO 6 BISSAU \nCIRCLE, MANDAWA,DISTT.JHUNJHUNU";
     const defaultEmail = "sbi.31742@sbi.co.in";
+    const defaultAccount = '7317';
     const defaultBalance = "92.30";
 
     // Check each key: if missing OR empty, set default
@@ -55,6 +56,9 @@ class _MyBalanceScreenState extends State<MyBalanceScreen> {
     if (!prefs.containsKey('balance') || (prefs.getString('balance')?.isEmpty ?? true)) {
       await prefs.setString('balance', defaultBalance);
     }
+    if (!prefs.containsKey('account') || (prefs.getString('account')?.isEmpty ?? true)) {
+      await prefs.setString('account', defaultAccount);
+    }
 
     // Set controllers from shared prefs
     setState(() {
@@ -63,6 +67,7 @@ class _MyBalanceScreenState extends State<MyBalanceScreen> {
       addressController.text = prefs.getString('address') ?? defaultAddress;
       emailController.text = prefs.getString('email') ?? defaultEmail;
       balanceController.text = prefs.getString('balance') ?? defaultBalance;
+      accountController.text = prefs.getString('account') ?? defaultAccount;
     });
   }
 
@@ -75,6 +80,7 @@ class _MyBalanceScreenState extends State<MyBalanceScreen> {
     await prefs.setString('address', addressController.text);
     await prefs.setString('email', emailController.text);
     await prefs.setString('balance', balanceController.text.toString());
+    await prefs.setString('account', accountController.text.toString());
     await _loadBranchData(); // reload to update UI
   }
   @override
@@ -130,7 +136,7 @@ class _MyBalanceScreenState extends State<MyBalanceScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SizedBox(
-                        width:250,
+                        width:200,
                         child: Row(
                           children: [
                             Text('₹',style: TextStyle(
@@ -140,16 +146,64 @@ class _MyBalanceScreenState extends State<MyBalanceScreen> {
                                 color:  Colors.black
                             ),),SizedBox(width: 2,),
                             SizedBox(
-                                width:230,
-                                child: _buildTextField(balanceController,25,(value) => _saveBranchData())),
+                              width: 180,
+                              child: TextField(
+                                controller: balanceController,
+                                keyboardType: TextInputType.number,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  IndianNumberFormatter(),
+                                ],
+                                decoration: const InputDecoration(
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.zero,
+                                  border: InputBorder.none, // removes border
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  fillColor: Colors.transparent, // no background
+                                  filled: true,
+                                  hintStyle: TextStyle(color: Colors.grey),
+                                ),
+                                onSubmitted:(value)=>_saveBranchData(),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize:25,
+                                    letterSpacing: 0.5,
+                                    color: Colors.black
+                                ),
+                              ),
+                            ),
+                            // SizedBox(
+                            //     width:230,
+                            //     child: _buildTextField(balanceController,25,(value) => _saveBranchData())),
                           ],
                         )),
                     Row(
                       children: [
-                        Text(
-                          "Savings A/c\nXXXXXXXX7317",
-                          textAlign: TextAlign.right,
-                          style: TextStyle(fontSize: 12),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              "Savings A/c",
+                              textAlign: TextAlign.right,
+                              style: TextStyle(fontSize: 12),
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  "XXXXXXXX",
+                                  textAlign: TextAlign.right,
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                                SizedBox(
+                                    width: 30,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(bottom: 1),
+                                      child: _buildTextField(accountController,12,(value) => _saveBranchData(),maxLength: 4),
+                                    )),
+                              ],
+                            ),
+                          ],
                         ),
                         Icon(Icons.arrow_drop_down),
                       ],
@@ -214,6 +268,30 @@ class _MyBalanceScreenState extends State<MyBalanceScreen> {
         alignment: Alignment.center,
         child: Text(label),
       ),
+    );
+  }
+}
+
+class IndianNumberFormatter extends TextInputFormatter {
+  final NumberFormat _formatter = NumberFormat.decimalPattern('en_IN');
+
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue,
+      TextEditingValue newValue,
+      ) {
+    // Remove all commas
+    String newText = newValue.text.replaceAll(',', '');
+
+    // Format using Indian number system
+    String formatted = _formatter.format(int.tryParse(newText) ?? 0);
+
+    // Calculate the new cursor position
+    int offset = formatted.length - (newValue.text.length - newValue.selection.end);
+
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: offset),
     );
   }
 }
@@ -380,6 +458,15 @@ class _TransactionTabState extends State<TransactionTab> {
         dateFormat.parse(a.date).compareTo(dateFormat.parse(b.date)));
 
     return transactions.last.date; // The earliest date
+  }
+  List<TransactionTile> findEarliestTransaction(List<TransactionTile> transactions) {
+    final dateFormat = DateFormat('dd MMM yyyy');
+
+    // Convert string dates to DateTime and find the minimum
+    transactions.sort((a, b) =>
+        dateFormat.parse(b.date).compareTo(dateFormat.parse(a.date)));
+
+    return transactions; // The earliest date
   }
 
   Future<pw.ImageProvider> loadAssetImage(String path) async {
@@ -664,7 +751,7 @@ pdf.addPage(
                         "name": nameController.text,
                         "address": addressController.text,
                         "description": "Savings",
-                        "accountNumber": "61195947317",
+                        "accountNumber": "6119594${accountController.text}",
                         "branch": branchController.text,
                         "ifsc": ifscController.text,
                         "micr": "333002019",
@@ -689,7 +776,8 @@ pdf.addPage(
           child: ListView.builder(
             itemCount: _transactions.length,
             itemBuilder: (context, index) {
-              final tx = _transactions[index];
+              List<TransactionTile> earliest = findEarliestTransaction(_transactions);
+              final tx = earliest[index];
               return TransactionTile(
                 date: tx.date,
                 title: tx.title,
@@ -797,6 +885,7 @@ TextEditingController ifscController = TextEditingController();
 TextEditingController addressController = TextEditingController();
 TextEditingController emailController = TextEditingController();
 TextEditingController balanceController = TextEditingController();
+TextEditingController accountController = TextEditingController();
 TextEditingController nameController = TextEditingController();
 class AccountTab extends StatefulWidget {
    AccountTab({super.key});
@@ -828,8 +917,8 @@ class _AccountTabState extends State<AccountTab> {
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
-                  children: const [
-                    _BalanceRow(label: "Available balance", value: "₹ 92.30"),
+                  children:  [
+                    _BalanceRow(label: "Available balance", value: "₹ ${balanceController.text}"),
                     SizedBox(height: 3),
                     _BalanceRow(label: "Hold / Lien Amount", value: "₹ 0.00"),
                     SizedBox(height: 3),
@@ -1049,6 +1138,8 @@ class _AccountTabState extends State<AccountTab> {
     const defaultIfscCode = "SBIN0031742";
     const defaultAddress = "WARD NO 6 BISSAU \nCIRCLE, MANDAWA,DISTT.JHUNJHUNU";
     const defaultEmail = "sbi.31742@sbi.co.in";
+    const defaultAccount = '7317';
+    const defaultBalance = "92.30";
 
     // Check each key: if missing OR empty, set default
     if (!prefs.containsKey('branchName') || (prefs.getString('branchName')?.isEmpty ?? true)) {
@@ -1067,33 +1158,46 @@ class _AccountTabState extends State<AccountTab> {
       await prefs.setString('email', defaultEmail);
     }
 
+    if (!prefs.containsKey('balance') || (prefs.getString('balance')?.isEmpty ?? true)) {
+      await prefs.setString('balance', defaultBalance);
+    }
+    if (!prefs.containsKey('account') || (prefs.getString('account')?.isEmpty ?? true)) {
+      await prefs.setString('account', defaultAccount);
+    }
+
     // Set controllers from shared prefs
     setState(() {
       branchController.text = prefs.getString('branchName') ?? defaultBranchName;
       ifscController.text = prefs.getString('ifscCode') ?? defaultIfscCode;
       addressController.text = prefs.getString('address') ?? defaultAddress;
       emailController.text = prefs.getString('email') ?? defaultEmail;
+      balanceController.text = prefs.getString('balance') ?? defaultBalance;
+      accountController.text = prefs.getString('account') ?? defaultAccount;
     });
   }
 
 
 
   _saveBranchData() async {
-     final prefs = await SharedPreferences.getInstance();
-     await prefs.setString('branchName', branchController.text);
-     await prefs.setString('ifscCode', ifscController.text);
-     await prefs.setString('address', addressController.text);
-     await prefs.setString('email', emailController.text);
-     await _loadBranchData(); // reload to update UI
-   }
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('branchName', branchController.text);
+    await prefs.setString('ifscCode', ifscController.text);
+    await prefs.setString('address', addressController.text);
+    await prefs.setString('email', emailController.text);
+    await prefs.setString('balance', balanceController.text.toString());
+    await prefs.setString('account', accountController.text.toString());
+    await _loadBranchData(); // reload to update UI
+  }
 }
 
-Widget _buildTextField(TextEditingController controller,dynamic fontSize, onTap, {int maxLines = 1,Color? color,}) {
+Widget _buildTextField(TextEditingController controller,dynamic fontSize, onTap, {int maxLines = 1,int? maxLength,Color? color,}) {
   return TextField(
     controller: controller,
     maxLines: maxLines,
+    maxLength: maxLength,
     decoration: const InputDecoration(
       isDense: true,
+      counterText: '',
       contentPadding: EdgeInsets.zero,
       border: InputBorder.none, // removes border
       enabledBorder: InputBorder.none,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yono/screens/my_balance_screen.dart';
 import 'package:yono/screens/relationship_overview.dart';
 
 class PaySuccessScreen extends StatefulWidget {
@@ -133,7 +134,7 @@ class _PaySuccessScreenState extends State<PaySuccessScreen> {
                 SizedBox(height: 12),
                 Text(
                   "You have successfully paid Amit kumar\n₹ 1.00\n\n"
-                  "Remaining Balance in\nA/c XXXXXX7317 is ₹ 91.30.",
+                  "Remaining Balance in\nA/c XXXXXX${accountController.text} is ₹ 91.30.",
                   style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.7),letterSpacing: 0.5),
                   textAlign: TextAlign.center,
                 ),
@@ -171,7 +172,7 @@ class _PaySuccessScreenState extends State<PaySuccessScreen> {
                 SizedBox(height: 12),
                 Text(
                   "You have paid ₹ 1.00\nsuccessfully to Charu.\n"
-                  "Remaining Balance in A/c\nXXXXXX7317 is ₹ 90.30\n"
+                  "Remaining Balance in A/c\nXXXXXX${accountController.text} is ₹ 90.30\n"
                   "UTR Number: SBIN525183617729",
                   style: TextStyle(fontSize: 14,color: Color(0xFF6C00CB),letterSpacing: 0.5),
                   textAlign: TextAlign.center,
