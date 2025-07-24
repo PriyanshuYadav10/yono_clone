@@ -353,6 +353,10 @@ class _TransactionTabState extends State<TransactionTab> {
                     TextField(
                       controller: amountController,
                       keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        IndianNumberFormatter(),
+                      ],
                       decoration: InputDecoration(
                         labelText: "Amount",
                         prefixIcon: const Icon(Icons.currency_rupee),
@@ -588,9 +592,9 @@ class _TransactionTabState extends State<TransactionTab> {
                 txn.date,
                 txn.title,
                 '',
-                txn.isCredit ? '-' : '₹${txn.amount}',
-                txn.isCredit ? '₹${txn.amount}' : '-',
-                '₹${11638.05}',
+                txn.isCredit ? '-' : txn.amount,
+                txn.isCredit ? txn.amount : '-',
+                (balanceController.text),
               ];
             }).toList(),
             headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
