@@ -431,7 +431,7 @@ class _TransactionTabState extends State<TransactionTab> {
                                       date: dateController.text.trim(),
                                       title: titleController.text.trim(),
                                       amount:
-                                          "₹ ${amountController.text.trim()}",
+                                          amountController.text.trim(),
                                       isCredit: isCredit,
                                     ),
                                   );
@@ -785,7 +785,7 @@ pdf.addPage(
               return TransactionTile(
                 date: tx.date,
                 title: tx.title,
-                amount: tx.amount,
+                amount: '₹ ${tx.amount}',
                 isCredit: tx.isCredit,
               );
             },
