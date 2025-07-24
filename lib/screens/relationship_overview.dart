@@ -27,6 +27,7 @@ class _RelationshipOverviewScreenState extends State<RelationshipOverviewScreen>
     const defaultIfscCode = "SBIN0031742";
     const defaultAddress = "WARD NO 6 BISSAU \nCIRCLE, MANDAWA,DISTT.JHUNJHUNU";
     const defaultEmail = "sbi.31742@sbi.co.in";
+    const defaultAccount = '7317';
     const defaultBalance = "92.30";
 
     // Check each key: if missing OR empty, set default
@@ -49,6 +50,9 @@ class _RelationshipOverviewScreenState extends State<RelationshipOverviewScreen>
     if (!prefs.containsKey('balance') || (prefs.getString('balance')?.isEmpty ?? true)) {
       await prefs.setString('balance', defaultBalance);
     }
+    if (!prefs.containsKey('account') || (prefs.getString('account')?.isEmpty ?? true)) {
+      await prefs.setString('account', defaultAccount);
+    }
 
     // Set controllers from shared prefs
     setState(() {
@@ -57,6 +61,7 @@ class _RelationshipOverviewScreenState extends State<RelationshipOverviewScreen>
       addressController.text = prefs.getString('address') ?? defaultAddress;
       emailController.text = prefs.getString('email') ?? defaultEmail;
       balanceController.text = prefs.getString('balance') ?? defaultBalance;
+      accountController.text = prefs.getString('account') ?? defaultAccount;
     });
   }
 
@@ -69,6 +74,7 @@ class _RelationshipOverviewScreenState extends State<RelationshipOverviewScreen>
     await prefs.setString('address', addressController.text);
     await prefs.setString('email', emailController.text);
     await prefs.setString('balance', balanceController.text.toString());
+    await prefs.setString('account', accountController.text.toString());
     await _loadBranchData(); // reload to update UI
   }
   @override
