@@ -274,9 +274,19 @@ class HomescreenSecond extends StatelessWidget {
                   InkWell(
                     onTap: () {
                       if (label == 'YONO Pay') {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => YonoPayScreen()));
+                        PersistentNavBarNavigator.pushNewScreen(
+                          context,
+                          screen: YonoPayScreen(),
+                          withNavBar: false,
+                          pageTransitionAnimation: PageTransitionAnimation.fade,
+                        );
                       } else if (label == 'Accounts') {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => RelationshipOverviewScreen()));
+                        PersistentNavBarNavigator.pushNewScreen(
+                          context,
+                          screen: RelationshipOverviewScreen(),
+                          withNavBar: false,
+                          pageTransitionAnimation: PageTransitionAnimation.fade,
+                        );
                       }
                     },
                     child: Container(

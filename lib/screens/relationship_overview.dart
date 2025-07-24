@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:yono/screens/my_balance_screen.dart';
 
 class RelationshipOverviewScreen extends StatefulWidget {
@@ -129,10 +130,12 @@ class _RelationshipOverviewScreenState extends State<RelationshipOverviewScreen>
   Widget buildBalanceTab() {
     return InkWell(
       onTap: (){
-        Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MyBalanceScreen()),
-                );
+        PersistentNavBarNavigator.pushNewScreen(
+          context,
+          screen: MyBalanceScreen(),
+          withNavBar: false,
+          pageTransitionAnimation: PageTransitionAnimation.fade,
+        );
       },
       child: Container(
         height: 100,
