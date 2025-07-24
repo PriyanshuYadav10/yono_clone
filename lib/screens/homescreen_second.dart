@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:yono/screens/my_balance_screen.dart';
@@ -7,15 +10,15 @@ import 'package:yono/screens/yono_pay_screen.dart';
 class HomescreenSecond extends StatelessWidget {
   HomescreenSecond({super.key});
 
-  final Color primaryColor = const Color(0xFF5B0B8B);
-  final Color accentColor = Color(0xFF982282);
+  final Color primaryColor = const  Color(0xFF6C00CB);
+  final Color accentColor =  Color(0xFFFB0C67);
 
-  final List<Map<String, dynamic>>  topGridItems = const [
+  final List<Map<String, dynamic>> topGridItems = const [
     {'icon': 'assets/account.png', 'label': 'Accounts'},
     {'icon': 'assets/safetyBox.png', 'label': 'Deposits'},
     {'icon': 'assets/loan.png', 'label': 'Loans'},
-    {'icon':  'assets/investment.png', 'label': 'Investments'},
-    {'icon':'assets/umbrella.png', 'label': 'Insurance'},
+    {'icon': 'assets/investment.png', 'label': 'Investments'},
+    {'icon': 'assets/umbrella.png', 'label': 'Insurance'},
     {'icon': 'assets/creditCard.png', 'label': 'Cards'},
     {'icon': 'assets/pay.png', 'label': 'YONO Pay'},
     {'icon': 'assets/account.png', 'label': 'YONO Cash'},
@@ -31,7 +34,7 @@ class HomescreenSecond extends StatelessWidget {
   final List<Map<String, dynamic>> bottomNavItems = const [
     {'icon': 'assets/service.png', 'label': 'Service Request'},
     {'icon': 'assets/badge.png', 'label': 'SBI Rewardz'},
-    {'icon': 'assets/UPI.png', 'label': ''},
+    {'icon': 'assets/UPI.png','icon2': 'assets/upi2.png', 'label': ''},
     {'icon': 'assets/offer.png', 'label': 'Best Offers'},
     {'icon': 'assets/link.png', 'label': 'Quick Links'},
   ];
@@ -39,16 +42,20 @@ class HomescreenSecond extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF5F8),
+      backgroundColor: const Color.fromARGB(255, 241, 235, 237),
       appBar: AppBar(
-        title: Image.asset("assets/appbarlogo.png",height:25,width: 120,fit: BoxFit.fill,),
+        backgroundColor: Colors.white,
+        title: Image.asset(
+          "assets/appbarlogo.png",
+          height: 25,
+          width: 120,
+          fit: BoxFit.fill,
+        ),
         centerTitle: true,
         automaticallyImplyLeading: false,
         leading: IconButton(
           icon: Icon(Icons.menu, color: Colors.black),
-          onPressed: () {
-
-          },
+          onPressed: () {},
         ),
         actions: [
           const Icon(Icons.call_outlined, color: Colors.black),
@@ -56,144 +63,143 @@ class HomescreenSecond extends StatelessWidget {
           const Icon(Icons.power_settings_new, color: Colors.black),
         ],
       ),
-      // bottomNavigationBar: _buildBottomNavBar(),
       body: PersistentTabView(
         context,
-        // controller: _controller,
-        screens:   [
-            SingleChildScrollView(
-              child: Column(
-                children: [
-                  _buildSearchBar(),
-                  _buildGrid(context, topGridItems),
-                  _buildPromoBanner(),
-                  _buildGrid(context, bottomGridItems),
-                  SizedBox(height:  15),
-                  Row(
-                    children: [
-                      Container(
-                        width: MediaQuery.sizeOf(context).width*0.5,
-                        height: 100,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: Colors.deepPurple, width: 0.5),
-                            borderRadius: BorderRadius.circular(8)
-                        ),
-                        margin: EdgeInsets.symmetric(horizontal: 10),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.agriculture, size: 26, color: Colors.deepPurple),
-                            const SizedBox(height: 8),
-                            Text(
-                              'YONO KRISHI',
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w500),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        height: 100,
-                        width: MediaQuery.sizeOf(context).width*0.4,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: Colors.deepPurple, width: 0.5),
-                            borderRadius: BorderRadius.circular(8)
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.new_releases_outlined, size: 26, color: Colors.deepPurple),
-                            const SizedBox(height: 8),
-                            Text(
-                              'SIP stating at ₹ 250',
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w500),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+        screens: [
+          _buildHomeScreen(context),
           SizedBox(),
           SizedBox(),
           SizedBox(),
           SizedBox(),
-
-          ],
+        ],
         items: _navBarsItems(),
         handleAndroidBackButtonPress: true,
-        resizeToAvoidBottomInset:false,
+        resizeToAvoidBottomInset: true,
         stateManagement: true,
         hideNavigationBarWhenKeyboardAppears: true,
         popBehaviorOnSelectedNavBarItemPress: PopBehavior.none,
-        hideOnScrollSettings: HideOnScrollSettings(
-          hideNavBarOnScroll: true,
-          // scrollControllers: _scrollControllers,
-        ),
         padding: const EdgeInsets.only(top: 8),
+        navBarStyle: NavBarStyle.style15,
+        navBarHeight: 65,
         onWillPop: (context) async {
           await showDialog(
-            context: context! ,
-            useSafeArea: true,
-            builder: (final context) => Container(
-              height: 50,
-              width: 50,
-              color: Colors.white,
-              child: ElevatedButton(
-                child: const Text("Close"),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
+            context: context!,
+            builder: (final context) => AlertDialog(
+              content: const Text("Do you want to exit?"),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text("No"),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text("Yes"),
+                ),
+              ],
             ),
           );
           return false;
         },
-        navBarStyle:  NavBarStyle.style15,
-        selectedTabScreenContext: (final context) {
-          // testContext = context;
-        },
-         // backgroundColor: Colors.grey ,
         animationSettings: const NavBarAnimationSettings(
           navBarItemAnimation: ItemAnimationSettings(
-            // Navigation Bar's items animation properties.
-            duration: Duration(milliseconds: 400),
+            duration: Duration(milliseconds: 300),
             curve: Curves.ease,
           ),
           screenTransitionAnimation: ScreenTransitionAnimationSettings(
-            // Screen transition animation on change of selected tab.
             animateTabTransition: true,
             duration: Duration(milliseconds: 300),
-            screenTransitionAnimationType:
-            ScreenTransitionAnimationType.fadeIn,
+            screenTransitionAnimationType: ScreenTransitionAnimationType.fadeIn,
           ),
           onNavBarHideAnimation: OnHideAnimationSettings(
             duration: Duration(milliseconds: 100),
             curve: Curves.bounceInOut,
           ),
         ),
-        confineToSafeArea: true,
-        navBarHeight: kBottomNavigationBarHeight,
+      ),
+      floatingActionButton:  Container(
+        width: 130,
+        height: 40,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+        margin: EdgeInsets.only(bottom: 60),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black54,
+              blurRadius: 4,
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            Text("Scan QR", style: TextStyle()),
+            SizedBox(width: 8),
+            Icon(Icons.qr_code_scanner, ),
+          ],
+        ),
+      ),
+    );
+  }
+  Widget _buildHomeScreen(BuildContext context) {
+    return Container(
+      color: const Color.fromARGB(255, 241, 235, 237),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            _buildSearchBar(),
+            _buildGrid(context, topGridItems),
+            _buildPromoBanner(),
+            _buildGrid2(context, bottomGridItems),
+            _buildPromoBanner2(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
+              child: CarouselSlider(
+                options: CarouselOptions(
+                  height: 170,
+                  autoPlay: true,
+                  enlargeCenterPage: true,
+                  viewportFraction: 1.2,
+                ),
+                items: [
+                  'assets/banner.jpg',
+                  'assets/banner1.jpg',
+                  'assets/banner2.jpg',
+                ].map((iconPath) {
+                  return Builder(
+                    builder: (BuildContext context) {
+                      return Image.asset(iconPath, width: MediaQuery.sizeOf(context).width, height: 170,fit: BoxFit.fill);
+                    },
+                  );
+                }).toList(),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildSearchBar() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       child: Row(
         children: [
           Expanded(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(30),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 4,
+                      offset: Offset(0,2),
+                    ),
+                  ]
               ),
               height: 45,
               child: Row(
@@ -211,20 +217,27 @@ class HomescreenSecond extends StatelessWidget {
             alignment: Alignment.center,
             width: 100,
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(30),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(30),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 4,
+                    offset: Offset(0,2),
+                  ),
+                ]
             ),
-            child: const Column(
+            child:  Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   Icons.headset_mic_outlined,
                   size: 15,
-                  color: Colors.deepPurple,
+                  color: Color(0xFFCE1FB3).withOpacity(0.5),
                 ),
                 Text(
                   "Chatbot",
-                  style: TextStyle(color: Colors.deepPurple, fontSize: 12),
+                  style: TextStyle(color: Colors.grey, fontSize: 12),
                 ),
               ],
             ),
@@ -233,14 +246,22 @@ class HomescreenSecond extends StatelessWidget {
       ),
     );
   }
+
   Widget _buildGrid(BuildContext context, List<Map<String, dynamic>> items) {
     const int crossAxisCount = 4;
 
     return Container(
-      margin: EdgeInsets.all(10),
+      margin: EdgeInsets.symmetric(horizontal: 16,vertical: 6),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: Colors.white.withOpacity(0.8),
+          borderRadius: BorderRadius.circular(8),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 4,
+              offset: Offset(0,2),
+            ),
+          ]
       ),
       padding: const EdgeInsets.all(4),
       child: LayoutBuilder(
@@ -256,7 +277,7 @@ class HomescreenSecond extends StatelessWidget {
             itemCount: items.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: crossAxisCount,
-              childAspectRatio: 0.88,
+              childAspectRatio: 1,
             ),
             itemBuilder: (_, index) {
               final label = items[index]['label'];
@@ -276,16 +297,16 @@ class HomescreenSecond extends StatelessWidget {
                       if (label == 'YONO Pay') {
                         PersistentNavBarNavigator.pushNewScreen(
                           context,
-                          screen: YonoPayScreen(),
                           withNavBar: false,
                           pageTransitionAnimation: PageTransitionAnimation.fade,
+                          screen: YonoPayScreen(),
                         );
                       } else if (label == 'Accounts') {
                         PersistentNavBarNavigator.pushNewScreen(
                           context,
-                          screen: RelationshipOverviewScreen(),
                           withNavBar: false,
                           pageTransitionAnimation: PageTransitionAnimation.fade,
+                          screen: RelationshipOverviewScreen(),
                         );
                       }
                     },
@@ -294,12 +315,20 @@ class HomescreenSecond extends StatelessWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Image.asset(icon, height: 26, width: 26, color: Colors.deepPurple),
+                          Image.asset(
+                            icon,
+                            height: 30,
+                            width: 30,
+                            color: Color(0xFFCE1FB3).withOpacity(0.5),
+                          ),
                           const SizedBox(height: 8),
                           Text(
                             label,
                             textAlign: TextAlign.center,
-                            style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w500),
+                            style: const TextStyle(
+                              fontSize: 11.5,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
                         ],
                       ),
@@ -321,9 +350,88 @@ class HomescreenSecond extends StatelessWidget {
                       left: 8,
                       right: 8,
                       bottom: 0,
-                      child: Container(height: 0.7, color: Colors.grey.shade300),
+                      child: Container(
+                        height: 0.7,
+                        color: Colors.grey.shade300,
+                      ),
                     ),
                 ],
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+  Widget _buildGrid2(BuildContext context, List<Map<String, dynamic>> items) {
+    const int crossAxisCount = 4;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      padding: const EdgeInsets.all(4),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final width = constraints.maxWidth;
+          final itemWidth = width / crossAxisCount;
+          final itemHeight = itemWidth / 0.88;
+
+          return GridView.builder(
+            padding: EdgeInsets.zero,
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: items.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
+              childAspectRatio: 1.25,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+            ),
+            itemBuilder: (_, index) {
+              final label = items[index]['label'];
+              final icon = items[index]['icon'];
+
+              return InkWell(
+                onTap: () {
+                  // handle tap
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color:Color(0xFFCE1FB3).withOpacity(0.5), width: 0.5),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 4,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        icon,
+                        height: 26,
+                        width: 26,
+                        color: const Color(0xFFCE1FB3).withOpacity(0.5),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        label,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               );
             },
           );
@@ -334,167 +442,312 @@ class HomescreenSecond extends StatelessWidget {
 
   Widget _buildPromoBanner() {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding:  EdgeInsets.symmetric(horizontal: 16,vertical: 8),
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFFFCE0F1),
-          borderRadius: BorderRadius.circular(16),
+            color:  Color(0xFFFFFFFF),
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 4,
+                offset: Offset(0,2),
+              ),
+            ]
         ),
-        padding: const EdgeInsets.all(12),
-        child: const Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Congrats! You are eligible for Life Cover upto ₹200000.",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 4),
-            Text("Get Policy instantly without Medical test or Documentation."),
-            SizedBox(height: 6),
-            Text(
-              "Tap here to Avail Now!",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBottomNavBar() {
-    return BottomAppBar(
-      shape: const CircularNotchedRectangle(),
-      child: SizedBox(
-        height: 50,
+        padding:  EdgeInsets.all(4),
         child: Row(
-          children: [
-            ...bottomNavItems
-                .sublist(0, 2)
-                .map((item) => _bottomNavItem(item['icon'], item['label'])),
 
-            ...bottomNavItems
-                .sublist(2)
-                .map((item) => _bottomNavItem(item['icon'], item['label'])),
+          children: [
+            Container(
+              width: 60,
+              height: 80,
+            ),
+            const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Congrats! You are eligible for Life Cover upto ₹200000.",
+                  style: TextStyle(fontWeight: FontWeight.w400,fontSize: 11),
+                ),
+                SizedBox(height: 4),
+                Text("Get Policy instantly without Medical test or Documentation.",
+                  style: TextStyle(fontWeight: FontWeight.w300,fontSize: 11),),
+                SizedBox(height: 3),
+                Text(
+                  "Tap here to Avail Now!",
+                  style: TextStyle(fontWeight: FontWeight.w400,fontSize: 11),
+                ),
+              ],
+            ),
           ],
         ),
       ),
     );
   }
-  List<PersistentBottomNavBarItem>  _navBarsItems() => [
-    PersistentBottomNavBarItem(
-      icon:Image.asset(bottomNavItems[0]['icon']),
-      title:bottomNavItems[0]['label'],
-  activeColorPrimary: Colors.white,
-  inactiveColorPrimary: Colors.grey,
-  activeColorSecondary:  Colors.deepPurple,
-      routeAndNavigatorSettings: RouteAndNavigatorSettings(
-        initialRoute: "/",
-        routes: {
-        },
-      ),
-      textStyle: TextStyle(fontSize: 11),
-      iconSize: 20
-    ),
-    PersistentBottomNavBarItem(
-        icon:Image.asset(bottomNavItems[1]['icon']),
-        title:bottomNavItems[1]['label'],
-        activeColorPrimary: Colors.white,
-        inactiveColorPrimary: Colors.grey,
-        activeColorSecondary:  Colors.deepPurple,
-        textStyle: TextStyle(fontSize: 11),
-      iconSize: 20
-    ),
-    PersistentBottomNavBarItem(
-      icon: CircleAvatar(
-        backgroundColor: Colors.white,
-        radius: 50,
-        child:Container(
-          height: 40,
-            width: 40,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(
-                color: Colors.deepPurple,
+
+  Widget _buildPromoBanner2() {
+    return Padding(
+      padding:  EdgeInsets.symmetric(horizontal: 16,vertical: 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              height: 110,
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                  color:  Color(0xFFFFFFFF),
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(color:Color(0xFFCE1FB3).withOpacity(0.5), width: 0.5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 4,
+                      offset: Offset(0,2),
+                    ),
+                  ]
               ),
-              image: DecorationImage(
-                image: AssetImage(bottomNavItems[2]['icon'])
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.agriculture, size: 50, color: Color(0xFFCE1FB3).withOpacity(0.5)),
+                      Text(
+                        'YONO KRISHI',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 10),
+                  const Expanded(
+                    child: Text(
+                      'YONO KRISHI\nGrow your Agri Business',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                  ),
+                ],
               ),
-              borderRadius: BorderRadius.circular(50)
             ),
-            padding: EdgeInsets.all(5),
-            // child: Image.asset(bottomNavItems[2]['icon'])
-        )
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Container(
+              height: 110,
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                  color:  Color(0xFFFFFFFF),
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(color:Color(0xFFCE1FB3).withOpacity(0.5), width: 0.5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 4,
+                      offset: Offset(0,2),
+                    ),
+                  ]
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Align(
+                    alignment:Alignment.centerRight,
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.circular(3)
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 8,vertical: 5),
+                      child:  Text(
+                        'New',
+                        style: TextStyle(fontSize: 12, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  Text(
+                    'Jan Nivesh SIP',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.black,
+                    ),
+                  ),
+                  Text(
+                    'Jan Jan Ka Nivesh',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 13,
+                      letterSpacing: 2,
+                      color: Colors.black54,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  const Text(
+                    'SIP starting at ₹250',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
-        title:bottomNavItems[2]['label'],
-        activeColorPrimary: Colors.white,
-        inactiveColorPrimary: Colors.grey,
-        activeColorSecondary:  Colors.deepPurple,
-        textStyle: TextStyle(fontSize: 11),
-      iconSize: 20
-    ),
+    );
+  }
+  List<PersistentBottomNavBarItem> _navBarsItems() => [
     PersistentBottomNavBarItem(
-        icon:Image.asset(bottomNavItems[3]['icon']),
-        title:bottomNavItems[3]['label'],
-        activeColorPrimary: Colors.white,
-        inactiveColorPrimary: Colors.grey,
-        activeColorSecondary:  Colors.deepPurple,
-        textStyle: TextStyle(fontSize: 11),
-      iconSize: 20
-    ),
-    PersistentBottomNavBarItem(
-        icon:Image.asset(bottomNavItems[4]['icon']),
-        title:bottomNavItems[4]['label'],
+      icon: Image.asset(
+        bottomNavItems[0]['icon'],
+        height: 28,
+      ),
+      title: bottomNavItems[0]['label'],
       activeColorPrimary: Colors.white,
       inactiveColorPrimary: Colors.grey,
-      activeColorSecondary:  Colors.deepPurple,
-        textStyle: TextStyle(fontSize: 11),
-      iconSize: 20
+      activeColorSecondary: Color(0xFFCE1FB3).withOpacity(0.5),
+      textStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.w500,overflow: TextOverflow.ellipsis),
+      iconSize: 28,
+    ),
+    PersistentBottomNavBarItem(
+      icon: Image.asset(
+        bottomNavItems[1]['icon'],
+        height: 28,
+      ),
+      title: bottomNavItems[1]['label'],
+      activeColorPrimary: Colors.white,
+      inactiveColorPrimary: Colors.grey,
+      activeColorSecondary: Color(0xFFCE1FB3).withOpacity(0.5),
+      textStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+      iconSize: 28,
+    ),
+    PersistentBottomNavBarItem(
+      icon: SlidingIconInsideContainer(
+        icon1Path: bottomNavItems[2]['icon'],
+        icon2Path: bottomNavItems[2]['icon2'],
+      ),
+      title: bottomNavItems[2]['label'],
+      activeColorPrimary: Colors.white,
+      inactiveColorPrimary: Colors.grey,
+      activeColorSecondary: Color(0xFFCE1FB3).withOpacity(0.5),
+      textStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+      iconSize: 80,
+    ),
+    PersistentBottomNavBarItem(
+      icon: Image.asset(
+        bottomNavItems[3]['icon'],
+        height: 28,
+      ),
+      title: bottomNavItems[3]['label'],
+      activeColorPrimary: Colors.white,
+      inactiveColorPrimary: Colors.grey,
+      activeColorSecondary: Color(0xFFCE1FB3).withOpacity(0.5),
+      textStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+      iconSize: 28,
+    ),
+    PersistentBottomNavBarItem(
+      icon: Image.asset(
+        bottomNavItems[4]['icon'],
+        height: 28,
+      ),
+      title: bottomNavItems[4]['label'],
+      activeColorPrimary: Colors.white,
+      inactiveColorPrimary: Colors.grey,
+      activeColorSecondary: Color(0xFF6C00CB),
+      textStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+      iconSize: 28,
     ),
   ];
-  Widget _bottomNavItem(String icon, String label) {
-    return InkWell(
-      onTap: () {},
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            Image.asset(icon,width: 22 ,height: 22, color: Colors.deepPurple),
-            Text(label, style: const TextStyle(fontSize: 11)),
-          ],
-        ),
-      ),
-    );
-  }
+
+
 }
 
-class _FeatureCard extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback? onTap;
+class SlidingIconInsideContainer extends StatefulWidget {
+  final String icon1Path;
+  final String icon2Path;
 
-  const _FeatureCard({required this.icon, required this.label, this.onTap});
+  const SlidingIconInsideContainer({
+    Key? key,
+    required this.icon1Path,
+    required this.icon2Path,
+  }) : super(key: key);
+
+  @override
+  State<SlidingIconInsideContainer> createState() =>
+      _SlidingIconInsideContainerState();
+}
+
+class _SlidingIconInsideContainerState
+    extends State<SlidingIconInsideContainer> with TickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<Offset> _animation;
+
+  bool _showFirstIcon = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+
+    _animation = Tween<Offset>(
+      begin: const Offset(-0.5, 0),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    ));
+
+    _startLoop();
+  }
+
+  Future<void> _startLoop() async {
+    while (mounted) {
+      await _controller.forward();
+      await Future.delayed(const Duration(seconds: 1));
+      setState(() => _showFirstIcon = !_showFirstIcon);
+      _controller.reset();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Card(
-        elevation: 0.5,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, size: 30, color: Colors.deepPurple),
-              const SizedBox(height: 6),
-              Text(
-                label,
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 12),
+    return Container(
+      height: 80,
+      width: 80,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.white,
+        border: Border.all(
+          color: const Color(0xFFCE1FB3).withOpacity(0.6),
+          width: 2,
+        ),
+      ),
+      child: ClipOval(
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            SlideTransition(
+              position: _animation,
+              child: Image.asset(
+                _showFirstIcon ? widget.icon1Path : widget.icon2Path,
+                height:!_showFirstIcon? 20:40,
+                width: !_showFirstIcon? 20:40,
+                fit: BoxFit.contain,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

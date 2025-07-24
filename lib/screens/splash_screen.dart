@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:yono/screens/homescreen_first.dart';
 
@@ -10,109 +12,195 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-  bool showGradient = false;
-  bool animationDone = false;
+   AnimationController? _controller;
+   Animation<double>? _rippleAnimation;
+   bool _isVisible = false;
 
   @override
   void initState() {
     super.initState();
-
     _controller = AnimationController(
-      vsync: this,
-      duration: Duration(seconds: 2),
-    );
+      vsync: this,     
+      duration: const Duration(seconds: 5),
+    )..repeat(reverse: false);
 
-    _animation =
-        Tween<double>(begin: 0.0, end: 4.0).animate(
-          CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-        )..addStatusListener((status) {
-  if (status == AnimationStatus.completed) {
-    setState(() => animationDone = true);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    _rippleAnimation = Tween<double>(begin: 0, end: 400).animate(
+      CurvedAnimation(parent: _controller!, curve: Curves.easeOut,),
+    );
+      Timer(const Duration(seconds: 5 ), () {
       Navigator.pushReplacement(
         context,
-        PageRouteBuilder(
-          transitionDuration: const Duration(milliseconds: 800),
-          pageBuilder: (_, __, ___) => HomescreenFirst(),
-          transitionsBuilder: (_, animation, __, child) {
-            return FadeTransition(opacity: animation, child: child);
-          },
-        ),
+        MaterialPageRoute(builder: (_) => const HomescreenFirst()),
       );
     });
-  }
-});
 
-
-    Future.delayed(Duration(seconds: 2), () {
-      setState(() => showGradient = true);
-      _controller.forward();
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        setState(() {
+          _isVisible = true;
+        });
+      }
     });
+
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Stack(
-        children: [
-          // Base gradient background
-          if (animationDone)
+      body: SafeArea(
+        child: Stack(
+          children: [
+            // Gradient background
             Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Color(0xFF5B2A91), Color(0xFFD73C6B)],
+                  begin: Alignment.bottomLeft,
+                  end: Alignment.topRight,
+                  colors: [
+                    Color(0xFFFB0C67), // pinkish red
+                    Color(0xFFCE1FB3), // magenta
+                    Color(0xFF6C00CB), // violet/purple (top right)
+                  ],
+                  stops: [0.0, 0.7, 1.0], // controls how much space each color takes
+
                 ),
               ),
             ),
-
-          // Shrinking circular mask to reveal background
-          if (showGradient && !animationDone)
+            
+            // Ripple splash effect behind
             Center(
               child: AnimatedBuilder(
-                animation: _animation,
+                animation: _rippleAnimation!,
                 builder: (context, child) {
                   return Container(
-                    width: MediaQuery.of(context).size.width * _animation.value,
-                    height:
-                        MediaQuery.of(context).size.height * _animation.value,
+                    width: _rippleAnimation?.value,
+                    height: _rippleAnimation?.value,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      // color: Colors.white,
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [Color(0xFF5B2A91), Color(0xFFD73C6B)],
-                      ),
+                      color: Colors.white.withOpacity(0.08),
                     ),
                   );
                 },
               ),
             ),
-
-          // Centered logo stays on top
-          Center(
-            child: CircleAvatar(
-              backgroundColor: Colors.white,
-              radius: 120,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(100),
-                child: Image.asset('assets/logo.png', width: 200, height: 200),
+            
+            // Center layered circular logo
+            Center(
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  _isVisible ?  Container(
+                    width: 400,
+                    height: 400,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.1),
+                    ),
+                  ) : SizedBox(),
+                  _isVisible ?  Container(
+                    width: 360,
+                    height: 360,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.1),
+                    ),
+                  ) : SizedBox(),
+                  _isVisible ?  Container(
+                    width: 320,
+                    height: 320,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.1),
+                    ),
+                  ) : SizedBox(),
+                  _isVisible ?  Container(
+                    width: 280,
+                    height: 280,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.1),
+                    ),
+                  ) : SizedBox(),
+                  _isVisible ? Container(
+                    width: 240,
+                    height: 240,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.2),
+                    ),
+                  ) : SizedBox(),
+                  Container(
+                    width: 200,
+                    height: 200,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                      image: DecorationImage(
+                        image: AssetImage('assets/logo.png'),
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+            
+            // Bottom curved white container with text
+            _isVisible ? Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: ClipPath(
+                clipper: BottomCurveClipper(),
+                child: Container(
+                  height: size.height * 0.18,
+                  color: Colors.white,
+                  alignment: Alignment.bottomCenter,
+                  padding: EdgeInsets.only(bottom: size.height * 0.050),
+                  child: const Text(
+                    'Banking · Payments · Lifestyle',
+                    style: TextStyle(
+                      color: Colors.black54,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.6,
+                    ),
+                  ),
+                ),
+              ),
+            ) : SizedBox(),
+          ],
+        ),
       ),
     );
   }
+}
+
+class BottomCurveClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    path.lineTo(0, 80);
+    path.quadraticBezierTo(
+      size.width / 2,
+      0,
+      size.width,
+      80,
+    );
+    path.lineTo(size.width, size.height);
+    path.lineTo(0, size.height);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yono/screens/pay_success_screen.dart';
 
 class YonoPayScreen extends StatelessWidget {
   const YonoPayScreen({super.key});
@@ -6,12 +7,12 @@ class YonoPayScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF5F8),
+      backgroundColor:Color.fromARGB(255, 241, 235, 237),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0.5,
         centerTitle: false,
-        title: Text("YONO PAY", style: TextStyle(color: Colors.deepPurple,fontSize: 15),),
+        title: Text("YONO PAY", style: TextStyle(color: Color(0xFF6C00CB),fontSize: 15),),
         automaticallyImplyLeading: false,
         leadingWidth: 80,
         leading: Row(
@@ -38,11 +39,14 @@ class YonoPayScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                children: const [
+                children: [
                   YonoPayTopCard(
                     icon: Icons.currency_rupee_rounded,
                     title: "Quick Transfer",
                     subtitle: "Upto ₹50000",
+                    onTap: (){
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PaySuccessScreen()));
+                    },
                   ),
                   SizedBox(width: 8),
                   YonoPayTopCard(
@@ -71,7 +75,7 @@ class YonoPayScreen extends StatelessWidget {
                     const Icon(
                       Icons.qr_code_2,
                       size: 50,
-                      color: Colors.deepPurple,
+                      color: Color(0xFF6C00CB),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
@@ -92,7 +96,7 @@ class YonoPayScreen extends StatelessWidget {
               const SizedBox(height: 20),
               const Text(
                 "Payments & Contribution",
-                style: TextStyle(fontWeight: FontWeight.bold,color: Colors.deepPurple),
+                style: TextStyle(fontWeight: FontWeight.bold,color: Color(0xFF6C00CB)),
               ),
               const SizedBox(height: 12),
               Row(
@@ -132,9 +136,9 @@ class YonoPayScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.03),
+                  color: Color.fromARGB(255, 241, 235, 237),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.deepPurple,width: 0.5),
+                  border: Border.all(color: Color(0xFF6C00CB),width: 0.5),
                   boxShadow: const [
                     BoxShadow(
                       color: Colors.black12,
@@ -145,7 +149,7 @@ class YonoPayScreen extends StatelessWidget {
                 ),
                 child: const Text(
                   "For a hassle-free transaction experience, please make sure your total limit per day for Third-Party Transfer (TPT) transactions is sufficiently set for all your transactions planned through the day.\n\nYou can change TPT limit anytime from above Manage Transaction Limit.",
-                  style: TextStyle(fontSize: 11,color: Colors.deepPurple),
+                  style: TextStyle(fontSize: 11,color: Color(0xFF6C00CB)),
                 ),
               ),
             ],
@@ -204,10 +208,10 @@ class YonoPayTopCard extends StatelessWidget {
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 10,
-                          color: Colors.deepPurple
+                          color: Color(0xFF6C00CB)
                         ),
                       ),
-                      Icon(Icons.arrow_forward_ios_rounded,size: 15,color: Colors.deepPurple,)
+                      Icon(Icons.arrow_forward_ios_rounded,size: 15,color: Color(0xFF6C00CB),)
                     ],
                   ),
                   const SizedBox(height: 4),
@@ -219,7 +223,7 @@ class YonoPayTopCard extends StatelessWidget {
               ),
               Align(
                   alignment: Alignment.bottomRight,
-                  child: Icon(icon, size: 26, color: Colors.deepPurple)),
+                  child: Icon(icon, size: 26, color: Color(0xFF6C00CB))),
             ],
           ),
         ),
@@ -255,7 +259,7 @@ class PaymentOption extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Icon(icon, size: 24, color: Colors.deepPurple),
+            Icon(icon, size: 24, color: Color(0xFF6C00CB)),
             Text(
               label,
               textAlign: TextAlign.center,
@@ -295,7 +299,7 @@ class InfoTile extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 24, color: Colors.deepPurple),
+          Icon(icon, size: 24, color: Color(0xFF6C00CB)),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -303,7 +307,7 @@ class InfoTile extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 12,color: Colors.deepPurple),
+                  style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 12,color: Color(0xFF6C00CB)),
                 ),
                 const SizedBox(height: 4),
                 Text(
