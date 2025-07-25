@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yono/screens/my_balance_screen.dart';
 
@@ -261,14 +262,36 @@ class _RelationshipOverviewScreenState extends State<RelationshipOverviewScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(height: 4),
-                      Text(
-                        isShow ? "6119594${accountController.text}" : "XXXXXXX${accountController.text}",
-                        style: TextStyle(fontSize: 13, color: Colors.black87),
+                      isShow
+                          ? Text(
+                        "6119594${accountController.text}",
+                        style: const TextStyle(fontSize: 13, color: Colors.black87),
+                      )
+                          : Row(
+                        children: [
+                          const Text(
+                            "XXXXXXX",
+                            textAlign: TextAlign.right,
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          SizedBox(
+                            width: 30,
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 1),
+                              child: _buildTextField(
+                                accountController,
+                                12,
+                                    (value) => _saveBranchData(),
+                                maxLength: 4,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      Text(
-                        branchController.text,
-                        style: TextStyle(fontSize: 13, color: Colors.black54),
-                      ),
+
+                      IntrinsicWidth(
+                          // width: MediaQuery.sizeOf(context).width*0.65,
+                          child: _buildTextField(branchController,13,(value) => _saveBranchData())),
                     ],
                   ),
                   GestureDetector(
@@ -291,9 +314,38 @@ class _RelationshipOverviewScreenState extends State<RelationshipOverviewScreen>
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20),
-                    child: Text(
-                      "₹ ${balanceController.text}",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    child: IntrinsicWidth(
+                      child: TextField(
+                        controller: balanceController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          IndianNumberFormatter(),
+                        ],
+                        decoration: const InputDecoration(
+                          isDense: true,
+                          contentPadding: EdgeInsets.zero,
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          fillColor: Colors.transparent,
+                          filled: true,
+                          hintStyle: TextStyle(color: Colors.grey),
+                        ),
+                        onSubmitted: (value) {
+                          if (!value.contains('.')) {
+                            balanceController.text = "$value.00";
+                          }
+                          _saveBranchData();
+                        },
+                        textAlign: TextAlign.end,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          letterSpacing: 0.5,
+                          color: Colors.black,
+                        ),
+                      ),
                     ),
                   ),
                   GestureDetector(
@@ -322,4 +374,31 @@ class _RelationshipOverviewScreenState extends State<RelationshipOverviewScreen>
       ],
     );
   }
+
+  Widget _buildTextField(TextEditingController controller,dynamic fontSize, onTap, {int maxLines = 1,int? maxLength,Color? color,}) {
+    return TextField(
+      controller: controller,
+      maxLines: maxLines,
+      maxLength: maxLength,
+      decoration: const InputDecoration(
+        isDense: true,
+        counterText: '',
+        contentPadding: EdgeInsets.zero,
+        border: InputBorder.none, // removes border
+        enabledBorder: InputBorder.none,
+        focusedBorder: InputBorder.none,
+        fillColor: Colors.transparent, // no background
+        filled: true,
+        hintStyle: TextStyle(color: Colors.grey),
+      ),
+      onSubmitted:onTap,
+      style: TextStyle(
+          fontWeight: FontWeight.w500,
+          fontSize:fontSize?.toDouble(),
+          letterSpacing: 0.5,
+          color: color?? Colors.black
+      ),
+    );
+  }
+
 }

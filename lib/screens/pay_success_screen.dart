@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yono/screens/my_balance_screen.dart';
 import 'package:yono/screens/relationship_overview.dart';
 
@@ -10,14 +11,85 @@ class PaySuccessScreen extends StatefulWidget {
 }
 
 class _PaySuccessScreenState extends State<PaySuccessScreen> {
+  TextEditingController successMsgCtrl = TextEditingController();
   @override
   void initState() {
     // TODO: implement initState
 
+    _loadBranchData();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       showTransactionSuccessDialog(context);
     });
     super.initState();
+  }
+  Future<void> _loadBranchData() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Default values
+    const defaultBranchName = "MANDAWA";
+    const defaultIfscCode = "SBIN0031742";
+    const defaultAddress = "WARD NO 6 BISSAU \nCIRCLE, MANDAWA,DISTT.JHUNJHUNU";
+    const defaultEmail = "sbi.31742@sbi.co.in";
+    const defaultAccount = '7317';
+    const defaultBalance = "92.30";
+
+    // Set defaults if missing
+    if (!prefs.containsKey('branchName') || (prefs.getString('branchName')?.isEmpty ?? true)) {
+      await prefs.setString('branchName', defaultBranchName);
+    }
+    if (!prefs.containsKey('ifscCode') || (prefs.getString('ifscCode')?.isEmpty ?? true)) {
+      await prefs.setString('ifscCode', defaultIfscCode);
+    }
+    if (!prefs.containsKey('address') || (prefs.getString('address')?.isEmpty ?? true)) {
+      await prefs.setString('address', defaultAddress);
+    }
+    if (!prefs.containsKey('email') || (prefs.getString('email')?.isEmpty ?? true)) {
+      await prefs.setString('email', defaultEmail);
+    }
+    if (!prefs.containsKey('balance') || (prefs.getString('balance')?.isEmpty ?? true)) {
+      await prefs.setString('balance', defaultBalance);
+    }
+    if (!prefs.containsKey('account') || (prefs.getString('account')?.isEmpty ?? true)) {
+      await prefs.setString('account', defaultAccount);
+    }
+
+    // NOW get fresh values from prefs
+    final account = prefs.getString('account') ?? defaultAccount;
+    final balance = prefs.getString('balance') ?? defaultBalance;
+
+    final defaultSuccessMsg =
+        "You have paid ₹1.00 successfully to Charu. Remaining Balance in A/c XXXXXX$account is ₹$balance UTR Number: SBIN525183617729";
+
+    // Set successMsg if missing
+    if (!prefs.containsKey('successMsg') || (prefs.getString('successMsg')?.isEmpty ?? true)) {
+      await prefs.setString('successMsg', defaultSuccessMsg);
+    }
+
+    // Set controllers
+    setState(() {
+      branchController.text = prefs.getString('branchName') ?? defaultBranchName;
+      ifscController.text = prefs.getString('ifscCode') ?? defaultIfscCode;
+      addressController.text = prefs.getString('address') ?? defaultAddress;
+      emailController.text = prefs.getString('email') ?? defaultEmail;
+      balanceController.text = balance;
+      accountController.text = account;
+      successMsgCtrl.text = (prefs.getString('successMsg') ?? defaultSuccessMsg).replaceAll('\u200B', '').trim();
+      successMsgCtrl.text = prefs.getString('successMsg') ?? defaultSuccessMsg;
+
+    });
+  }
+
+
+  _saveBranchData() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('branchName', branchController.text);
+    await prefs.setString('ifscCode', ifscController.text);
+    await prefs.setString('address', addressController.text);
+    await prefs.setString('email', emailController.text);
+    await prefs.setString('balance', balanceController.text.toString());
+    await prefs.setString('account', accountController.text.toString());
+    await prefs.setString('successMsg', successMsgCtrl.text.toString());
+    await _loadBranchData(); // reload to update UI
   }
 
   @override
@@ -132,18 +204,15 @@ class _PaySuccessScreenState extends State<PaySuccessScreen> {
                   style: TextStyle(fontWeight: FontWeight.w400, fontSize: 17,color: Colors.black),
                 ),
                 SizedBox(height: 12),
-                Text(
-                  "You have successfully paid Amit kumar\n₹ 1.00\n\n"
-                  "Remaining Balance in\nA/c XXXXXX${accountController.text} is ₹ 91.30.",
-                  style: TextStyle(fontSize: 14,color: Colors.black.withOpacity(0.7),letterSpacing: 0.5),
-                  textAlign: TextAlign.center,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 60),
+                  child: _buildTextField(successMsgCtrl,14,(value) => _saveBranchData(),maxLines: 5,color:Colors.black.withOpacity(0.7) ),
                 ),
               ],
             ),
           ),
        );
   }
-
   Future showTransactionSuccessDialog(BuildContext context) {
     return showDialog(
       context: context,
@@ -170,18 +239,16 @@ class _PaySuccessScreenState extends State<PaySuccessScreen> {
                   style: TextStyle(fontWeight: FontWeight.w500, fontSize: 17),
                 ),
                 SizedBox(height: 12),
-                Text(
-                  "You have paid ₹ 1.00\nsuccessfully to Charu.\n"
-                  "Remaining Balance in A/c\nXXXXXX${accountController.text} is ₹ 90.30\n"
-                  "UTR Number: SBIN525183617729",
-                  style: TextStyle(fontSize: 14,color: Color(0xFF6C00CB),letterSpacing: 0.5),
-                  textAlign: TextAlign.center,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 30),
+                  child: _buildTextField(successMsgCtrl,14,(value) => _saveBranchData(),maxLines: 5),
                 ),
                 SizedBox(height: 16),
 
                 GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onTap: () {
+                    _saveBranchData();
                     Navigator.of(context).pop();
                   },
                   child: Container(
@@ -211,4 +278,33 @@ class _PaySuccessScreenState extends State<PaySuccessScreen> {
       },
     );
   }
+
+  Widget _buildTextField(TextEditingController controller,dynamic fontSize, onTap, {int maxLines = 1,int? maxLength,Color? color,}) {
+    return TextField(
+      controller: controller,
+      maxLines: maxLines,
+      maxLength: maxLength,
+      decoration: const InputDecoration(
+        isDense: true,
+        counterText: '',
+        contentPadding: EdgeInsets.zero,
+        border: InputBorder.none, // removes border
+        enabledBorder: InputBorder.none,
+        focusedBorder: InputBorder.none,
+        fillColor: Colors.transparent, // no background
+        filled: true,
+        hintStyle: TextStyle(color: Colors.grey),
+      ),
+      onSubmitted:onTap,
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        height: 1.8,
+          color:color?? Color(0xFF6C00CB),
+        letterSpacing: 0.5,
+          fontWeight: FontWeight.w500,
+          fontSize:fontSize?.toDouble(),
+      ),
+    );
+  }
+
 }

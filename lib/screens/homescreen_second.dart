@@ -463,22 +463,24 @@ class HomescreenSecond extends StatelessWidget {
               width: 60,
               height: 80,
             ),
-            const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Congrats! You are eligible for Life Cover upto ₹200000.",
-                  style: TextStyle(fontWeight: FontWeight.w400,fontSize: 11),
-                ),
-                SizedBox(height: 4),
-                Text("Get Policy instantly without Medical test or Documentation.",
-                  style: TextStyle(fontWeight: FontWeight.w300,fontSize: 11),),
-                SizedBox(height: 3),
-                Text(
-                  "Tap here to Avail Now!",
-                  style: TextStyle(fontWeight: FontWeight.w400,fontSize: 11),
-                ),
-              ],
+            Flexible(
+              child: const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Congrats! You are eligible for Life Cover upto ₹200000.",
+                    style: TextStyle(fontWeight: FontWeight.w400,fontSize: 10),
+                  ),
+                  SizedBox(height: 4),
+                  Text("Get Policy instantly without Medical test or Documentation.",
+                    style: TextStyle(fontWeight: FontWeight.w300,fontSize: 10),),
+                  SizedBox(height: 3),
+                  Text(
+                    "Tap here to Avail Now!",
+                    style: TextStyle(fontWeight: FontWeight.w400,fontSize: 10),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

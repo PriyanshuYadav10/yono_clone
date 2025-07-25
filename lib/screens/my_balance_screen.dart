@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/services.dart' show rootBundle, TextInputFormatter, FilteringTextInputFormatter;
@@ -10,6 +12,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:open_file/open_file.dart';
 import 'package:printing/printing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../model/transaction_model.dart';
 class MyBalanceScreen extends StatefulWidget {
   const MyBalanceScreen({super.key});
 
@@ -164,7 +168,13 @@ class _MyBalanceScreenState extends State<MyBalanceScreen> {
                                   filled: true,
                                   hintStyle: TextStyle(color: Colors.grey),
                                 ),
-                                onSubmitted:(value)=>_saveBranchData(),
+                                onSubmitted: (value) {
+                                  // Check if already contains a decimal
+                                  if (!value.contains('.')) {
+                                    balanceController.text = "$value.00";
+                                  }
+                                  _saveBranchData();
+                                },
                                 style: TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontSize:25,
@@ -296,6 +306,28 @@ class IndianNumberFormatter extends TextInputFormatter {
   }
 }
 
+class TransactionStorage {
+  static const String key = 'transactions';
+
+  static Future<void> saveTransactions(List<TransactionModel> transactions) async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonList = transactions.map((tx) => tx.toJson()).toList();
+    prefs.setString(key, jsonEncode(jsonList));
+    loadTransactions();
+  }
+
+  static Future<List<TransactionModel>> loadTransactions() async {
+    final prefs = await SharedPreferences.getInstance();
+    final data = prefs.getString(key);
+
+    if (data != null) {
+      final List<dynamic> decoded = jsonDecode(data);
+      return decoded.map((item) => TransactionModel.fromJson(item)).toList();
+    }
+
+    return [];
+  }
+}
 class TransactionTab extends StatefulWidget {
   const TransactionTab({super.key});
 
@@ -304,7 +336,7 @@ class TransactionTab extends StatefulWidget {
 }
 
 class _TransactionTabState extends State<TransactionTab> {
-  final List<TransactionTile> _transactions = [];
+  List<TransactionModel> _transactions = [];
   void _showTransactionBottomSheet() {
     final titleController = TextEditingController();
     final amountController = TextEditingController();
@@ -364,6 +396,11 @@ class _TransactionTabState extends State<TransactionTab> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
+                      onSubmitted: (value){
+                        if (!value.contains('.')) {
+                          amountController.text = "$value.00";
+                        }
+                      },
                     ),
                     const SizedBox(height: 12),
                     GestureDetector(
@@ -421,21 +458,25 @@ class _TransactionTabState extends State<TransactionTab> {
                         const SizedBox(width: 10),
                         Expanded(
                           child: ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
                               if (titleController.text.isNotEmpty &&
                                   amountController.text.isNotEmpty &&
                                   dateController.text.isNotEmpty) {
-                                setState(() {
-                                  _transactions.add(
-                                    TransactionTile(
-                                      date: dateController.text.trim(),
-                                      title: titleController.text.trim(),
-                                      amount:
-                                          amountController.text.trim(),
-                                      isCredit: isCredit,
-                                    ),
+                                // setState(() async {
+                                if (!amountController.text.trim().contains('.')) {
+                                  amountController.text = "${amountController.text.trim()}.00";
+                                }
+                                  final newTransaction = TransactionModel(
+                                    date: dateController.text.trim(),
+                                    title: titleController.text.trim(),
+                                    amount:
+                                    amountController.text.trim(),
+                                    isCredit: isCredit,
                                   );
-                                });
+                                    _transactions.add(newTransaction);
+                                  _transactionStreamController?.add(_transactions);
+                                  await TransactionStorage.saveTransactions(_transactions);
+                                // });
                                 Navigator.pop(context);
                               }
                             },
@@ -454,7 +495,7 @@ class _TransactionTabState extends State<TransactionTab> {
     );
   }
 
-  String findEarliestTransactionDate(List<TransactionTile> transactions) {
+  String findEarliestTransactionDate(List<TransactionModel> transactions) {
     final dateFormat = DateFormat('dd MMM yyyy');
 
     // Convert string dates to DateTime and find the minimum
@@ -463,7 +504,7 @@ class _TransactionTabState extends State<TransactionTab> {
 
     return transactions.last.date; // The earliest date
   }
-  List<TransactionTile> findEarliestTransaction(List<TransactionTile> transactions) {
+  List<TransactionModel> findEarliestTransaction(List<TransactionModel> transactions) {
     final dateFormat = DateFormat('dd MMM yyyy');
 
     // Convert string dates to DateTime and find the minimum
@@ -610,7 +651,7 @@ class _TransactionTabState extends State<TransactionTab> {
     await Printing.layoutPdf(onLayout: (PdfPageFormat format) async => pdf.save());
   }
 
-  void generateBankStatementPDF(Map<String, dynamic> accountInfo, List<TransactionTile> transactions) async {
+  void generateBankStatementPDF(Map<String, dynamic> accountInfo, List<TransactionModel> transactions) async {
   final pdf = pw.Document();
 pdf.addPage(
   pw.MultiPage(
@@ -700,9 +741,30 @@ pdf.addPage(
     ];
     return months[month - 1];
   }
+@override
+  void initState() {
+    // TODO: implement initState
+  loadData();
+  _transactionStreamController = StreamController<List<TransactionModel>>.broadcast();
+  super.initState();
+  }
 
   @override
+  void dispose() {
+    _transactionStreamController?.close();
+    super.dispose();
+  }
+  Future<void> loadData() async {
+    final loaded = await TransactionStorage.loadTransactions();
+    setState(() {
+      _transactions = loaded;
+      _transactionStreamController?.add(_transactions);
+    });
+  }
+   StreamController<List<TransactionModel>>? _transactionStreamController;
+  @override
   Widget build(BuildContext context) {
+    List<TransactionModel> earliest = findEarliestTransaction(_transactions);
     return Column(
       children: [
         Container(
@@ -777,23 +839,28 @@ pdf.addPage(
         ),
         const SizedBox(height: 8),
         Expanded(
-          child: ListView.builder(
-            itemCount: _transactions.length,
-            itemBuilder: (context, index) {
-              List<TransactionTile> earliest = findEarliestTransaction(_transactions);
-              final tx = earliest[index];
-              return TransactionTile(
-                date: tx.date,
-                title: tx.title,
-                amount: '₹ ${tx.amount}',
-                isCredit: tx.isCredit,
+          child: StreamBuilder<List<TransactionModel>>(
+            stream: _transactionStreamController?.stream,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return const Center(child: Text("No transactions available"));
+              }
+
+              final transactions = findEarliestTransaction(snapshot.data!); // use filtered or full list
+              return ListView.builder(
+                itemCount: transactions.length,
+                itemBuilder: (context, index) {
+                  return TransactionTile(transaction: transactions[index]);
+                },
               );
             },
           ),
         ),
+
       ],
     );
   }
+
 }
 
   Widget _buildSearchBar( showTransactionBottomSheet) {
@@ -833,22 +900,13 @@ pdf.addPage(
   }
 
 class TransactionTile extends StatelessWidget {
-  final String date;
-  final String title;
-  final String amount;
-  final bool isCredit;
+  final TransactionModel transaction;
 
-  const TransactionTile({
-    super.key,
-    required this.date,
-    required this.title,
-    required this.amount,
-    required this.isCredit,
-  });
+  const TransactionTile({super.key, required this.transaction});
 
   @override
   Widget build(BuildContext context) {
-    return  Padding(
+    return Padding(
       padding: const EdgeInsets.all(5.0),
       child: Column(
         children: [
@@ -859,30 +917,31 @@ class TransactionTile extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(date, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text(transaction.date, style: const TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 4),
                   SizedBox(
                     width: MediaQuery.sizeOf(context).width * 0.6,
-                    child: Text(title, style: const TextStyle(fontSize: 12)),
+                    child: Text(transaction.title, style: const TextStyle(fontSize: 12)),
                   ),
                   const SizedBox(height: 4),
                 ],
               ),
               Text(
-                (isCredit ? "+ " : "- ") + amount,
+                (transaction.isCredit ? "+ " : "- ") + "₹ ${transaction.amount}",
                 style: TextStyle(
-                  color: isCredit ? Colors.green : Colors.red,
+                  color: transaction.isCredit ? Colors.green : Colors.red,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ],
           ),
-          Divider(color:  Color.fromARGB(255, 241, 235, 237),)
+          const Divider(color: Color.fromARGB(255, 241, 235, 237)),
         ],
       ),
     );
   }
 }
+
 
 TextEditingController branchController = TextEditingController();
 TextEditingController ifscController = TextEditingController();
