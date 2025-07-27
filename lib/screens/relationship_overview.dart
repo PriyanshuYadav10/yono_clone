@@ -264,30 +264,16 @@ class _RelationshipOverviewScreenState extends State<RelationshipOverviewScreen>
                       SizedBox(height: 4),
                       isShow
                           ? Text(
-                        "6119594${accountController.text}",
-                        style: const TextStyle(fontSize: 13, color: Colors.black87),
+                        accountController.text,
+                        style: const TextStyle(fontSize: 13,
+                            fontWeight: FontWeight.w500, color: Colors.black),
                       )
-                          : Row(
-                        children: [
-                          const Text(
-                            "XXXXXXX",
-                            textAlign: TextAlign.right,
-                            style: TextStyle(fontSize: 12),
-                          ),
-                          SizedBox(
-                            width: 30,
-                            child: Padding(
-                              padding: const EdgeInsets.only(bottom: 1),
-                              child: _buildTextField(
-                                accountController,
-                                12,
-                                    (value) => _saveBranchData(),
-                                maxLength: 4,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                          : IntrinsicWidth(
+                        // width: 30,
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 1),
+                            child: _buildMaskedAccountField(accountController,13,(value) => _saveBranchData(),maxLength: 12),
+                          )),
 
                       IntrinsicWidth(
                           // width: MediaQuery.sizeOf(context).width*0.65,
@@ -374,7 +360,81 @@ class _RelationshipOverviewScreenState extends State<RelationshipOverviewScreen>
       ],
     );
   }
+  Widget _buildMaskedAccountField(
+      TextEditingController controller,
+      double fontSize,
+      Function(String)? onChanged, {
+        int maxLines = 1,
+        int? maxLength,
+        Color? color,
+      }) {
+    return StatefulBuilder(
+      builder: (context, setState) {
+        final maskedController = TextEditingController();
+        bool isFocused = false;
 
+        // Mask text on first build
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!isFocused && controller.text.isNotEmpty) {
+            maskedController.text = _maskAccountText(controller.text);
+          }
+        });
+
+        return Focus(
+          onFocusChange: (hasFocus) {
+            isFocused = hasFocus;
+            if (hasFocus) {
+              // Unmask on focus
+              maskedController.text = controller.text;
+              maskedController.selection =
+                  TextSelection.collapsed(offset: maskedController.text.length);
+            } else {
+              // Mask on blur
+              maskedController.text = _maskAccountText(controller.text);
+            }
+          },
+          child: TextField(
+            controller: maskedController,
+            maxLines: maxLines,
+            maxLength: maxLength,
+            keyboardType: TextInputType.number,
+            onSubmitted: (val) {
+              controller.text = val;
+              controller.selection =
+                  TextSelection.collapsed(offset: controller.text.length);
+              onChanged?.call(val);
+            },
+            decoration: const InputDecoration(
+              isDense: true,
+              counterText: '',
+              contentPadding: EdgeInsets.zero,
+              border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              fillColor: Colors.transparent,
+              filled: true,
+              hintStyle: TextStyle(color: Colors.grey),
+            ),
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: fontSize.toDouble(),
+              letterSpacing: 0.5,
+              color: color ?? Colors.black,
+            ),
+          ),
+        );
+      },
+    );
+  }
+  String _maskAccountText(String text) {
+    if (text.length <= 4) return text;
+    return 'X' * (text.length - 4) + text.substring(text.length - 4);
+  }
+
+
+  String _unmaskIfNeeded(String maskedText, {required String realText}) {
+    return realText;
+  }
   Widget _buildTextField(TextEditingController controller,dynamic fontSize, onTap, {int maxLines = 1,int? maxLength,Color? color,}) {
     return TextField(
       controller: controller,
