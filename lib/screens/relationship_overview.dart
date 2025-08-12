@@ -337,10 +337,22 @@ class _RelationshipOverviewScreenState extends State<RelationshipOverviewScreen>
                   GestureDetector(
                     behavior: HitTestBehavior.translucent,
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => MyBalanceScreen()),
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (_) => Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.deepPurple,
+                            strokeWidth: 1,
+                          ),
+                        ),
                       );
+                      Future.delayed(Duration(seconds: 5), () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => MyBalanceScreen()),
+                        );
+                      });
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 20),

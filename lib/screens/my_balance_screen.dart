@@ -91,7 +91,7 @@ class _MyBalanceScreenState extends State<MyBalanceScreen> {
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 3,
-      initialIndex: 1,
+      initialIndex: 0,
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(

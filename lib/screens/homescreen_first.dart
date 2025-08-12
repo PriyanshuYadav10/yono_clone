@@ -439,8 +439,8 @@ class _HomescreenFirstState extends State<HomescreenFirst>     with SingleTicker
       alignment: Alignment.center,
       children: [
         Container(
-          margin: const EdgeInsets.all(16),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
+          margin: const EdgeInsets.all(10),
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
           decoration: BoxDecoration(
             color: Colors.transparent,
             borderRadius: BorderRadius.circular(16),
@@ -588,7 +588,7 @@ class _QuickIcon extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Image.asset(icon, height: 30, width: 30,color: Color(0xFFCE1FB3).withOpacity(0.5),),
+        Image.asset(icon, height: 25, width: 30,color: Color(0xFFCE1FB3).withOpacity(0.5),),
         const SizedBox(height: 6),
         SizedBox(
           width: 80,
